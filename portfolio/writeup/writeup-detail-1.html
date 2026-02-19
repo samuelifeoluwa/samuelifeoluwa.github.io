@@ -1,0 +1,47 @@
+<!-- Windows Defender Evasion Basics Writeup -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>Windows Defender Evasion Basics</h1>
+  <p><span class="tag">Evasion</span> <span class="tag">Obfuscation</span> <span class="tag">Defender Bypass</span> <span class="tag">PowerShell</span></p>
+</div>
+
+<div class="detail-content">
+  <div class="step">
+    <h3>Introduction</h3>
+    <p>Overview of basic payload obfuscation techniques used to reduce detection while maintaining functionality. Includes backtick splitting, variable renaming, and string concatenation methods.</p>
+  </div>
+  
+  <div class="step">
+    <h3>Technique 1: Backtick Character Splitting</h3>
+    <div class="command-box">
+      Original: New-Object<br>
+      Obfuscated: N`e`w-`O`b`j`e`c`t<br>
+      Original: Out-String<br>
+      Obfuscated: O`u`t-`S`t`r`i`n`g
+    </div>
+    <p>PowerShell treats backticks as escape characters but ignores them when parsing cmdlets.</p>
+  </div>
+  
+  <div class="step">
+    <h3>Technique 2: Variable Name Obfuscation</h3>
+    <div class="command-box">
+      Original: $client = New-Object System.Net.Sockets.TCPClient<br>
+      Obfuscated: $fglarowugbycc = N`e`w-`O`b`j`e`c`t System.Net.Sockets.TCPClient
+    </div>
+    <p>Using random, non-descriptive variable names avoids signature-based detection.</p>
+  </div>
+  
+  <div class="step">
+    <h3>Technique 3: String Concatenation</h3>
+    <div class="command-box">
+      Original: "PowerShell"<br>
+      Obfuscated: "Pow" + "er" + "Shell"
+    </div>
+    <p>Breaking strings into multiple parts prevents simple pattern matching.</p>
+  </div>
+  
+  <div class="step">
+    <h3>Conclusion</h3>
+    <p>Combining multiple obfuscation techniques significantly increases the chance of bypassing signature-based AV solutions. However, modern EDR solutions with behavioral analysis may still detect malicious activity.</p>
+  </div>
+</div>

