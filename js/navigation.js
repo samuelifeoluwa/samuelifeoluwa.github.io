@@ -139,13 +139,5 @@ document.addEventListener('DOMContentLoaded', function() {
             showDetail(detailId);
         });
     });
-    
-    // Setup download button
-    const downloadBtn = document.querySelector('.download-button');
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            alert('Resume PDF will be available soon!');
-        });
-    }
+
 });
