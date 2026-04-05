@@ -1,0 +1,80 @@
+<!-- Geolocation Script Detail -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>Geolocation Script</h1>
+  <p><span class="tag">PowerShell</span> <span class="tag">Geolocation</span> <span class="tag">Situational Awareness</span> <span class="tag">OSINT</span></p>
+</div>
+
+<div class="detail-content">
+  <div class="step">
+    <h3>Overview</h3>
+    <p>PowerShell script that retrieves latitude and longitude information from a target system using IP geolocation, WiFi triangulation, and system locale data for situational awareness during red team operations.</p>
+  </div>
+  
+  <div class="step">
+    <h3>IP Geolocation Function</h3>
+    <div class="command-box">
+      function Get-GeolocationFromIP {<br>
+      &nbsp;&nbsp;$ip = (Invoke-WebRequest -Uri "http://ifconfig.me/ip" -UseBasicParsing).Content.Trim()<br>
+      &nbsp;&nbsp;$geo = Invoke-RestMethod -Uri "http://ip-api.com/json/$ip"<br>
+      &nbsp;&nbsp;return @{<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;IP = $ip<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;Country = $geo.country<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;Region = $geo.regionName<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;City = $geo.city<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;Latitude = $geo.lat<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;Longitude = $geo.lon<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;ISP = $geo.isp<br>
+      &nbsp;&nbsp;}<br>
+      }
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>WiFi Triangulation</h3>
+    <div class="command-box">
+      function Get-WiFiGeolocation {<br>
+      &nbsp;&nbsp;$networks = netsh wlan show networks mode=bssid | Select-String -Pattern "SSID|BSSID|Signal"<br>
+      &nbsp;&nbsp;# Send network data to Google Maps Geolocation API<br>
+      &nbsp;&nbsp;$body = @{<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;considerIp = "false"<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;wifiAccessPoints = @($networks | ForEach-Object { @{macAddress = $_; signalStrength = $_ } })<br>
+      &nbsp;&nbsp;} | ConvertTo-Json<br>
+      &nbsp;&nbsp;$result = Invoke-RestMethod -Uri "https://www.googleapis.com/geolocation/v1/geolocate?key=YOUR_API_KEY" -Method Post -Body $body -ContentType "application/json"<br>
+      &nbsp;&nbsp;return $result.location<br>
+      }
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>System Locale Analysis</h3>
+    <div class="command-box">
+      function Get-SystemLocale {<br>
+      &nbsp;&nbsp;$tz = (Get-TimeZone).DisplayName<br>
+      &nbsp;&nbsp;$culture = Get-Culture<br>
+      &nbsp;&nbsp;$keyboard = Get-WmiObject -Class Win32_Keyboard<br>
+      &nbsp;&nbsp;return @{<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;TimeZone = $tz<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;Language = $culture.DisplayName<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;KeyboardLayout = $keyboard.Description<br>
+      &nbsp;&nbsp;}<br>
+      }
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>Complete Script</h3>
+    <div class="command-box">
+      function Get-FullGeolocation {<br>
+      &nbsp;&nbsp;Write-Host "[*] Gathering IP Geolocation..." -ForegroundColor Cyan<br>
+      &nbsp;&nbsp;$ipGeo = Get-GeolocationFromIP<br>
+      &nbsp;&nbsp;Write-Host "[+] Located: $($ipGeo.City), $($ipGeo.Country)" -ForegroundColor Green<br>
+      &nbsp;&nbsp;Write-Host "[+] Coordinates: $($ipGeo.Latitude), $($ipGeo.Longitude)"<br>
+      &nbsp;&nbsp;Write-Host "`n[*] Analyzing System Locale..."<br>
+      &nbsp;&nbsp;$locale = Get-SystemLocale<br>
+      &nbsp;&nbsp;Write-Host "[+] Timezone: $($locale.TimeZone)"<br>
+      &nbsp;&nbsp;return $ipGeo<br>
+      }
+    </div>
+  </div>
+</div>

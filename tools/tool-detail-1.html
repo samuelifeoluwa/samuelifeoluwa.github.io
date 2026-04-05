@@ -1,0 +1,65 @@
+<!-- PowerShell Enumeration Scripts Detail -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>PowerShell Enumeration Scripts</h1>
+  <p><span class="tag">PowerShell</span> <span class="tag">Enumeration</span> <span class="tag">Automation</span> <span class="tag">Post-Exploitation</span></p>
+</div>
+
+<div class="detail-content">
+  <div class="step">
+    <h3>Overview</h3>
+    <p>Custom PowerShell scripts generated and modified for system enumeration and shell access testing while Windows Defender remained active. Includes system info gathering, network scanning, and credential hunting.</p>
+  </div>
+  
+  <div class="step">
+    <h3>System Information Script</h3>
+    <div class="command-box">
+      function Get-SystemInfo {<br>
+      &nbsp;&nbsp;$info = @{}<br>
+      &nbsp;&nbsp;$info.Hostname = $env:COMPUTERNAME<br>
+      &nbsp;&nbsp;$info.Username = $env:USERNAME<br>
+      &nbsp;&nbsp;$info.OS = (Get-WmiObject Win32_OperatingSystem).Caption<br>
+      &nbsp;&nbsp;$info.Arch = (Get-WmiObject Win32_ComputerSystem).SystemType<br>
+      &nbsp;&nbsp;$info.IP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -notmatch "127.*"})[0].IPAddress<br>
+      &nbsp;&nbsp;return $info<br>
+      }
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>Credential Hunting Script</h3>
+    <div class="command-box">
+      function Find-Credentials {<br>
+      &nbsp;&nbsp;$paths = @(<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;"$env:USERPROFILE\.aws\credentials",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;"$env:USERPROFILE\.ssh\*",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;"$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt",<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;"C:\Windows\System32\config\*"<br>
+      &nbsp;&nbsp;)<br>
+      &nbsp;&nbsp;foreach ($path in $paths) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;if (Test-Path $path) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write-Host "[+] Found: $path" -ForegroundColor Green<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;}<br>
+      }
+    </div>
+  </div>
+  
+  <div class="step">
+    <h3>Network Scanner Script</h3>
+    <div class="command-box">
+      function Invoke-PortScan {<br>
+      &nbsp;&nbsp;param($Subnet = "192.168.1", $Ports = @(22,80,443,445,3389,5985))<br>
+      &nbsp;&nbsp;1..254 | ForEach-Object {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;$ip = "$Subnet.$_"<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;foreach ($port in $Ports) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$result = Test-NetConnection -ComputerName $ip -Port $port -WarningAction SilentlyContinue<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($result.TcpTestSucceeded) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write-Host "[+] $ip : $port is open" -ForegroundColor Green<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;}<br>
+      }
+    </div>
+  </div>
+</div>
