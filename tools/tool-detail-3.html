@@ -1,0 +1,42 @@
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>Web Scraper</h1>
+  <p><span class="tag">Python</span> <span class="tag">BeautifulSoup</span> <span class="tag">Requests</span></p>
+</div>
+
+<div class="detail-content">
+
+  <div class="step">
+    <h3>What it does</h3>
+    <ul>
+      <li>Asks for a URL</li>
+      <li>Downloads the webpage using requests</li>
+      <li>Parses the HTML with BeautifulSoup</li>
+      <li>Finds all &lt;a&gt; tags with href attributes</li>
+      <li>Prints each href link to the console</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h3>Code</h3>
+    <div class="command-box">
+      <code>
+import requests<br>
+from bs4 import BeautifulSoup<br>
+import re<br>
+<br>
+url = input('Enter the URL of the website you want to scrape: ')<br>
+res = requests.get(url)<br>
+soup = BeautifulSoup(res.content, 'html.parser')<br>
+<br>
+for link in soup.find_all('a', href=True):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(link.get('href'))
+      </code>
+    </div>
+  </div>
+  
+<div class="step">
+    <h3>Download</h3>
+    <a href="../tools/web_scraper.py" download="web_scraper.py" style="color: var(--accent);">⬇️ Download web_scraper.py</a>
+  </div>
+</div>

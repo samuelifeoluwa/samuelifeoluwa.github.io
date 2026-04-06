@@ -1,0 +1,78 @@
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>Port Scanner</h1>
+  <p><span class="tag">Python</span> <span class="tag">Port Scanner</span> <span class="tag">Socket</span></p>
+</div>
+
+<div class="detail-content">
+
+  <div class="step">
+    <h3>What it does</h3>
+    <ul>
+      <li>Asks for target IP address</li>
+      <li>Lets you choose scan type: single port, port range, specific ports, common ports (1-1000), or all ports (1-65535)</li>
+      <li>Scans ports one at a time (sequential)</li>
+      <li>Prints which ports are open</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h3>Code</h3>
+    <div class="command-box">
+      <code>
+import socket<br>
+<br>
+target = input('Enter target Ipaddress:')<br>
+open_ports = []<br>
+ports = []<br>
+<br>
+print('SELECT SCAN TYPE')<br>
+print("1. Single port")<br>
+print("2. Port range (e.g., 20-100)")<br>
+print("3. Specific ports (e.g., 22,80,443)")<br>
+print("4. Common ports (1-1000)")<br>
+print("5. All ports (1-65535)")<br>
+<br>
+choice = input('choose (1-5): ')<br>
+if choice == '1':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ports = [int(input('Enter port'))]<br>
+elif choice == '2':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;start = int(input('Enter start port: '))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;end = int(input('Enter end port: '))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ports = range(start, end + 1)<br>
+elif choice == '3':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ports_input = input('Enter ports (comma-separated): ')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ports = [int(p.strip()) for p in ports_input.split(',')]<br>
+elif choice == '4':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ports = range(1, 1001)<br>
+elif choice == '5':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ports = range(1, 65536)<br>
+else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print('invalid choice')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exit()<br>
+<br>
+def scan_port(port):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;s.settimeout(1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result = s.connect_ex((target, port))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if result == 0:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;open_ports.append(port)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;s.close()<br>
+<br>
+for port in ports:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;scan_port(port)<br>
+<br>
+if open_ports:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(f'Ports {open_ports} found on {target}')<br>
+else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(f'No port was found open on {target}')
+      </code>
+    </div>
+  </div>
+  
+<div class="step">
+    <h3>Download</h3>
+    <a href="../tools/port_scanner.py" download="port_scanner.py" style="color: var(--accent);">⬇️ Download port_scanner.py</a>
+  </div>
+
+</div>
