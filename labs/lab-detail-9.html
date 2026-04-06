@@ -1,0 +1,410 @@
+<!-- SOC338 - Lumma Stealer Phishing Analysis -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>SOC338 - Lumma Stealer Phishing Analysis</h1>
+  <p><span class="tag">Phishing Analysis</span> <span class="tag">Lumma Stealer</span> <span class="tag">Incident Response</span> <span class="tag">Email Analysis</span> <span class="tag">Threat Intelligence</span></p>
+</div>
+
+<div class="detail-content">
+  <!-- Disclaimer -->
+  <div class="note" style="background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444;">
+    <h3>⚠️ ETHICAL LAB TESTING DISCLAIMER</h3>
+    <p><strong>This phishing analysis was conducted on the LetsDefend.io SOC simulation platform.</strong> All activities were performed in a controlled, authorized training environment for educational purposes.</p>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="step">
+    <h3>📋 Executive Summary</h3>
+    <p>This report documents the analysis of a phishing email attempting to deliver Lumma Stealer malware via DLL side-loading. The email falsely offered a free Windows 11 Pro upgrade. The recipient clicked the embedded link, visited the malicious domain, and their system was subsequently compromised.</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+      <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚨</div>
+        <div><strong>Phase 1:</strong> Alert Triage</div>
+        <div style="font-size: 0.9rem; color: #9ca3af;">Event ID 316 - Critical Severity</div>
+      </div>
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📧</div>
+        <div><strong>Phase 2:</strong> Email Analysis</div>
+        <div style="font-size: 0.9rem; color: #9ca3af;">Suspicious Sender Domain Identified</div>
+      </div>
+      <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+        <div><strong>Phase 3:</strong> Malicious Domain Investigation</div>
+        <div style="font-size: 0.9rem; color: #9ca3af;">Domain Confirmed Malicious</div>
+      </div>
+      <div style="background: rgba(139, 92, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌐</div>
+        <div><strong>Phase 4:</strong> Threat Intelligence - SMTP IP</div>
+        <div style="font-size: 0.9rem; color: #9ca3af;">Malicious IP Confirmed</div>
+      </div>
+      <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
+        <div><strong>Phase 5:</strong> Containment</div>
+        <div style="font-size: 0.9rem; color: #9ca3af;">System Isolated - Escalated to Tier 2</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 6px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div>
+          <strong>Victim:</strong> dylan@letsdefend.io<br>
+          <strong>SMTP IP:</strong> 132.232.40.201<br>
+          <strong>Malware:</strong> Lumma Stealer
+        </div>
+        <div>
+          <strong>Sender:</strong> update@windows-update.site<br>
+          <strong>Subject:</strong> Free Windows 11 Pro Upgrade<br>
+          <strong>Compromise Status:</strong> Confirmed
+        </div>
+        <div>
+          <strong>Device Action:</strong> Allowed<br>
+          <strong>Rule:</strong> SOC338<br>
+          <strong>Date:</strong> March 13, 2025
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 1: Alert Triage -->
+  <div class="step">
+    <h3>🚨 Phase 1: Alert Triage</h3>
+    <p>A critical alert was generated with Event ID 316 - SOC338: Lumma Stealer - DLL Side-Loading via Click Fix Phishing.</p>
+    
+    <div class="lab-image">
+      <img src="../assets/images/eventid-316-alert.JPG" alt="Event ID 316 Alert">
+      <div class="lab-image-caption">Figure 1: Critical alert as displayed in the LetsDefend dashboard</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Alert Details:</span><br>
+      <br>
+      EVENT ID: 316<br>
+      RULE: SOC338 - Lumma Stealer - DLL Side-Loading via Click Fix Phishing<br>
+      TIME: March 13, 2025, 09:44 AM<br>
+      SEVERITY: Critical<br>
+      SMTP ADDRESS: 132.232.40.201<br>
+      SOURCE ADDRESS: update@windows-update.site<br>
+      DESTINATION ADDRESS: dylan@letsdefend.io<br>
+      EMAIL SUBJECT: Upgrade your system to Windows 11 Pro for FREE<br>
+      DEVICE ACTION: Allowed<br>
+      TRIGGER REASON: Redirected site contains a click fix script for Lumma Stealer distribution
+    </div>
+  </div>
+
+  <!-- PHASE 2: Email Analysis -->
+  <div class="step">
+    <h3>📧 Phase 2: Email Analysis</h3>
+    <p>Examination of the email revealed several indicators consistent with phishing campaigns.</p>
+    
+    <div class="lab-image">
+      <img src="../assets/images/phishing-email.JPG" alt="Phishing Email">
+      <div class="lab-image-caption">Figure 2: Phishing email - fraudulent Windows 11 Pro upgrade offer</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Red Flags Identified:</span><br>
+      <br>
+      ✓ Sender domain (windows-update.site) is suspicious and illegitimate<br>
+      ✓ Free Windows 11 Pro upgrade offer is a known phishing lure<br>
+      ✓ SMTP IP address (132.232.40.201) requires further investigation<br>
+      ✓ Generic greeting lacking personalization<br>
+      ✓ Urgency tactics to prompt immediate action
+    </div>
+  </div>
+
+  <!-- PHASE 3: Website Inspection (MOVED UP) -->
+  <div class="step">
+    <h3>🔍 Phase 3: Malicious Domain Investigation</h3>
+    <p>Using browser developer tools, the embedded link was identified as https://windows-update.site. The domain was submitted to VirusTotal and confirmed malicious.</p>
+    
+    <div class="lab-image">
+      <img src="../assets/images/inspect-website.JPG" alt="Website Inspection">
+      <div class="lab-image-caption">Figure 3: Developer tools inspection revealing malicious domain</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Domain Investigation Results:</span><br>
+      <br>
+      URL: https://windows-update.site<br>
+      VirusTotal Verdict: Malicious<br>
+      <br>
+      <span style="color: #a6e22e;">Conclusion:</span> The domain is malicious and associated with Lumma Stealer distribution.
+    </div>
+    
+    <div class="lab-image">
+      <img src="../assets/images/virustotal-website.JPG" alt="VirusTotal Website Results">
+      <div class="lab-image-caption">Figure 4: VirusTotal - windows-update.site flagged as malicious</div>
+    </div>
+  </div>
+
+  <!-- PHASE 4: Threat Intelligence - SMTP IP (MOVED DOWN) -->
+  <div class="step">
+    <h3>🌐 Phase 4: Threat Intelligence - SMTP IP Analysis</h3>
+    <p>The SMTP IP address 132.232.40.201 was submitted to VirusTotal and IPinfo.io for reputation analysis.</p>
+    
+    <div class="lab-image">
+      <img src="../assets/images/virustotal-smtp-ip.JPG" alt="VirusTotal SMTP IP Results">
+      <div class="lab-image-caption">Figure 5: VirusTotal - SMTP IP flagged as malicious</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">VirusTotal Results:</span><br>
+      <br>
+      IP: 132.232.40.201<br>
+      Verdict: Malicious<br>
+      <br>
+      <span style="color: #a6e22e;">IPinfo.io Results:</span><br>
+      <br>
+      Geolocation: China<br>
+      <br>
+      <span style="color: #a6e22e;">Conclusion:</span> The IP address has a known malicious reputation.
+    </div>
+    
+    <div class="lab-image">
+      <img src="../assets/images/ipinfo-smtp.jpg" alt="IPinfo SMTP IP Lookup">
+      <div class="lab-image-caption">Figure 6: IPinfo.io - IP geolocated in China</div>
+    </div>
+  </div>
+
+  <!-- PHASE 5: Endpoint Investigation -->
+  <div class="step">
+    <h3>🖥️ Phase 5: Endpoint Investigation - Victim Analysis</h3>
+    <p>The victim's system was examined for evidence of compromise.</p>
+    
+    <h4>Browser History:</h4>
+    <div class="lab-image">
+      <img src="../assets/images/browser-history-dylan.JPG" alt="Victim Browser History">
+      <div class="lab-image-caption">Figure 7: Browser history confirming navigation to windows-update.site</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Browser History Findings:</span><br>
+      <br>
+      ✓ Victim navigated to https://windows-update.site from the email link<br>
+      ✓ Multiple redirects observed<br>
+      ✓ Click fix script detected
+    </div>
+    
+    <h4 style="margin-top: 1.5rem;">Terminal History Analysis:</h4>
+    <div class="lab-image">
+      <img src="../assets/images/terminal-history.JPG" alt="Terminal History">
+      <div class="lab-image-caption">Figure 8: Terminal history - malicious link extracted</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Terminal History Findings:</span><br>
+      <br>
+      ✓ Extracted URL: https://overcoatpassably.shop/Z8UZbPyVpGfdRS/maloy.mp4<br>
+      ✓ Submitted extracted link to VirusTotal - confirmed malicious<br>
+      ✓ Suspicious commands executed post-visit<br>
+      ✓ Evidence of DLL side-loading activity
+    </div>
+    
+    <div class="lab-image">
+      <img src="../assets/images/virustotal-terminal-link.JPG" alt="VirusTotal Terminal Link">
+      <div class="lab-image-caption">Figure 9: VirusTotal - Extracted terminal link flagged as malicious</div>
+    </div>
+    
+    <h4 style="margin-top: 1.5rem;">Running Processes:</h4>
+    <div class="lab-image">
+      <img src="../assets/images/suspicious-processes.jpg" alt="Suspicious Processes">
+      <div class="lab-image-caption">Figure 10: Running processes - suspicious processes detected</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Process Analysis Findings:</span><br>
+      <br>
+      ✓ Unknown processes consistent with Lumma Stealer behavior<br>
+      ✓ DLL side-loading indicators present<br>
+      <br>
+      <span style="color: #fd971f;">→ System compromise confirmed</span>
+    </div>
+  </div>
+
+  <!-- PHASE 6: Raw Log Review -->
+  <div class="step">
+    <h3>📄 Phase 6: Raw Log Verification</h3>
+    <p>Raw logs were reviewed to confirm email transmission details.</p>
+    
+    <div class="lab-image">
+      <img src="../assets/images/raw-log-smtp.JPG" alt="Raw Log SMTP">
+      <div class="lab-image-caption">Figure 11: Raw log - SMTP email details confirmed</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Raw Log Details:</span><br>
+      <br>
+      TYPE: Exchange<br>
+      SOURCE ADDRESS: 132.232.40.201<br>
+      SOURCE PORT: 23542<br>
+      DESTINATION ADDRESS: 172.16.20.3<br>
+      DESTINATION PORT: 25<br>
+      TIME: March 13, 2025, 09:44 AM<br>
+      <br>
+      EMAIL DETAILS:<br>
+      FROM: update@windows-update.site<br>
+      TO: dylan@letsdefend.io<br>
+      SUBJECT: Upgrade your system to Windows 11 Pro for FREE<br>
+      ACTION: Allowed
+    </div>
+  </div>
+
+  <!-- PHASE 7: Response Actions -->
+  <div class="step">
+    <h3>🛡️ Phase 7: Response Actions</h3>
+    <p>The following actions were taken following confirmation of compromise.</p>
+    
+    <div class="lab-image">
+      <img src="../assets/images/contained-system.JPG" alt="System Contained">
+      <div class="lab-image-caption">Figure 12: Endpoint containment executed post-verification</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Actions Performed:</span><br>
+      <br>
+      1. ✓ <span style="color: #a6e22e;">Confirmed system compromise</span> (browser history, terminal activity, process analysis, VirusTotal correlation)<br>
+      2. ✓ <span style="color: #a6e22e;">Contained the affected endpoint</span> to prevent lateral movement<br>
+      3. ✓ <span style="color: #a6e22e;">Escalated to Tier 2</span> for deeper investigation and remediation<br>
+      4. ✓ <span style="color: #a6e22e;">Documented findings</span> in incident report<br>
+      <br>
+      <span style="color: #fd971f;">Recommendations for Tier 2:</span><br>
+      • Block IP 132.232.40.201 at perimeter<br>
+      • Block domain windows-update.site<br>
+      • Perform malware scan on victim system<br>
+      • Review and enhance email filtering rules<br>
+      • Conduct user awareness training
+    </div>
+  </div>
+
+  <!-- Investigation Summary -->
+  <div class="step">
+    <h3>📊 Investigation Summary</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+      <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🚨</div>
+        <div><strong>Alert Source</strong></div>
+        <div style="font-size: 0.9rem;">LetsDefend Event ID 316</div>
+      </div>
+      
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">📧</div>
+        <div><strong>Suspicious Email</strong></div>
+        <div style="font-size: 0.9rem;">Free Windows 11 Pro Upgrade</div>
+      </div>
+      
+      <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🔗</div>
+        <div><strong>Malicious Domain</strong></div>
+        <div style="font-size: 0.9rem;">windows-update.site</div>
+      </div>
+      
+      <div style="background: rgba(139, 92, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🌐</div>
+        <div><strong>SMTP IP</strong></div>
+        <div style="font-size: 0.9rem;">132.232.40.201 (China)</div>
+      </div>
+      
+      <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">✅</div>
+        <div><strong>Outcome</strong></div>
+        <div style="font-size: 0.9rem;">Compromise Confirmed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final Verdict -->
+  <div class="step">
+    <h3>✅ Final Verdict</h3>
+    
+    <div class="command-box" style="background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444;">
+      <span style="color: #ef4444; font-size: 1.2rem; font-weight: bold;">TRUE POSITIVE - CONFIRMED COMPROMISE</span><br>
+      <br>
+      <span style="color: #a6e22e;">Supporting Evidence:</span><br>
+      ✓ Suspicious email domain (windows-update.site)<br>
+      ✓ Fraudulent free Windows 11 Pro upgrade offer<br>
+      ✓ SMTP IP (132.232.40.201) flagged malicious by VirusTotal<br>
+      ✓ SMTP IP geolocated to China (IPinfo.io)<br>
+      ✓ Website inspection revealed malicious domain - VirusTotal confirmed<br>
+      ✓ Extracted terminal history link - VirusTotal confirmed<br>
+      ✓ Browser history confirms domain visit<br>
+      ✓ Terminal history shows post-visit activity<br>
+      ✓ Suspicious processes detected on victim endpoint<br>
+      ✓ Endpoint contained following verification
+    </div>
+  </div>
+
+  <!-- Indicators of Compromise -->
+  <div class="step">
+    <h3>📌 Indicators of Compromise (IOCs)</h3>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Network IOCs:</span><br>
+      <br>
+      • <span style="color: #f92672;">SMTP IP:</span> 132.232.40.201<br>
+      • <span style="color: #f92672;">Malicious Domain:</span> windows-update.site<br>
+      • <span style="color: #f92672;">Malicious URL:</span> https://windows-update.site<br>
+      • <span style="color: #f92672;">Sender Email:</span> update@windows-update.site<br>
+      • <span style="color: #f92672;">Email Subject:</span> Upgrade your system to Windows 11 Pro for FREE<br>
+      <br>
+      <span style="color: #66d9ef;">Host IOCs:</span><br>
+      <br>
+      • <span style="color: #f92672;">Browser History:</span> windows-update.site visit recorded<br>
+      • <span style="color: #f92672;">Terminal History:</span> Extracted malicious link, suspicious command execution<br>
+      • <span style="color: #f92672;">Processes:</span> Unknown processes associated with Lumma Stealer
+    </div>
+  </div>
+
+  
+  <!-- Recommendations -->
+  <div class="step">
+    <h3>🛡️ Recommendations</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+      <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #ef4444;">
+        <h4>Immediate Actions (Tier 2)</h4>
+        <ul>
+          <li>Block IP 132.232.40.201 at perimeter firewall</li>
+          <li>Block domain windows-update.site across all security controls</li>
+          <li>Perform full malware scan on victim endpoint</li>
+          <li>Maintain endpoint isolation if not already contained</li>
+        </ul>
+      </div>
+      
+      <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #f59e0b;">
+        <h4>Remediation</h4>
+        <ul>
+          <li>Remove identified malicious files and processes</li>
+          <li>Reset any potentially compromised credentials</li>
+          <li>Review and strengthen email filtering rules</li>
+        </ul>
+      </div>
+      
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #3b82f6;">
+        <h4>Preventive Measures</h4>
+        <ul>
+          <li>Conduct organization-wide phishing awareness training</li>
+          <li>Enable advanced email threat protection</li>
+          <li>Implement automated domain reputation blocking</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <!-- Conclusion -->
+  <div class="step">
+    <h3>📝 Conclusion</h3>
+    <p>This investigation confirmed a <strong>successful phishing attack</strong> resulting in endpoint compromise. The attacker employed social engineering via a fraudulent Windows 11 Pro upgrade offer. The victim clicked the embedded link, visited the malicious domain windows-update.site (confirmed malicious via VirusTotal), and their system was compromised by Lumma Stealer through DLL side-loading.</p>
+    
+    <div class="note" style="background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444; margin-top: 1rem;">
+      <p><strong>Key Takeaways:</strong> Email senders and embedded links must be verified before interaction. Free or urgent offers are common phishing lures. Threat intelligence platforms such as VirusTotal are essential for validating suspicious IPs, domains, and links. Endpoint compromise was confirmed through multiple independent sources (email analysis, website inspection, terminal history extraction, VirusTotal correlation, and process analysis). The affected system was contained and escalated to Tier 2 for further remediation.</p>
+    </div>
+    
+    <p style="margin-top: 1rem; font-size: 0.9rem; color: #9ca3af;">
+      <em>This analysis was conducted for educational purposes within the LetsDefend SOC training environment.</em>
+    </p>
+  </div>
+</div>
