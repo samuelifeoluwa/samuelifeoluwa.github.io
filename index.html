@@ -269,6 +269,22 @@
       <span class="tag">Email Analysis</span>
     </a>
     
+    <!-- Lab 10 -->
+<!-- Lab 10 - Short Version -->
+<a href="#" class="card lab-card" data-detail="lab-detail-10">
+  <h3>SOC335 — CVE-2024-49138 Exploitation (Windows Kernel Privilege Escalation)</h3>
+  <p>
+    Critical alert on host "victor" (172.16.17.207). Malicious hash (50/72 VT) and S3 URL confirmed. 
+    Contained endpoint immediately. Reconstructed attack chain from PowerShell history: whoami /priv → 
+    downloaded password-protected ZIP (infected) → extracted via 7-Zip → executed svohost.exe (PID 7640). 
+    Escalated to Tier 2.
+  </p>
+  <span class="tag">CVE-2024-49138</span>
+  <span class="tag">Privilege Escalation</span>
+  <span class="tag">PowerShell</span>
+  <span class="tag">Containment</span>
+  <span class="tag">Incident Response</span>
+</a>
     </div>
   </section>
 
@@ -344,6 +360,7 @@
 <div id="lab-detail-7" class="detail-page" style="display: none;"></div>
 <div id="lab-detail-8" class="detail-page" style="display: none;"></div>
 <div id="lab-detail-9" class="detail-page" style="display: none;"></div>
+<div id="lab-detail-10" class="detail-page" style="display: none;"></div>
 
 <!-- Include writeup detail pages -->
 <!-- <div id="writeup-detail-1" class="detail-page" style="display: none;"></div>
