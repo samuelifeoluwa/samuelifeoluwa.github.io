@@ -38,28 +38,27 @@
 
  <header>
   <h1>Samuel <span>Oshunsan</span> | <span>Cybersecurity</span> Portfolio</h1>
-  <!-- <p>Security Enthusiast • SOC Track • Offensive Security Learner</p> -->
+  <p>Security Practitioner • SOC & Offensive Security </p>
   <nav>
     <a href="#about" class="nav-link">About</a>
     <a href="#skills" class="nav-link">Skills</a>
     <a href="#certifications" class="nav-link">Certifications</a>
     <a href="#labs" class="nav-link">Labs</a>
     <a href="#tools" class="nav-link">Tools</a> 
-    <a href="#resume" class="nav-link">Resume</a>
     <a href="#contact" class="nav-link">Contact</a>
   </nav>
 </header>
 
- <section id="about">
+<section id="about">
   <h2>About Me</h2>
   <p>
-    I am a <strong>Computer Science graduate</strong> and <strong>cybersecurity professional</strong> with hands-on experience gained through bootcamps, online training, and independent lab environments.
+    I am a <strong>Computer Science graduate</strong> and <strong>cybersecurity practitioner</strong> with hands-on experience in vulnerability assessment, host exploitation, network analysis, and incident detection.
   </p>
   <p>
-    I focus on learning security fundamentals including vulnerability assessment, host exploitation, network analysis, and incident detection. I have completed multiple lab projects involving Windows exploitation, web application security, wireless attacks, and log analysis.
+    I build and operate my own lab environments for red team simulation and blue team detection — including deploying Wazuh SIEM, configuring detection rules, and responding to alerts I generate through controlled attacks.
   </p>
   <p>
-    I am currently preparing for the eJPT certification and actively building my skills for a future role in <strong>Security Operations (SOC)</strong> or <strong>Penetration Testing</strong>.
+    Pursuing <strong>eJPT certification</strong> to formalize my penetration testing skills, with the goal of contributing to a <strong>Security Operations (SOC)</strong> or <strong>Penetration Testing</strong> team.
   </p>
 </section>
 
@@ -297,20 +296,22 @@
   <span class="tag">Authentication Bypass</span>
   <span class="tag">Incident Response</span>
 </a> -->
-   <!-- Lab 12 - Short Version -->
+
+<!-- Lab 12 - Home Lab Reverse Shell -->
 <a href="#" class="card lab-card" data-detail="lab-detail-12">
-   <h3>Home Lab — PowerShell TCP Reverse Shell Detection & Containment</h3>
+  <h3>Home Lab — PowerShell TCP Reverse Shell Detection & Response</h3>
   <p>
-    High-severity alert on DESKTOP-Q5QINJF (192.168.253.1). Explorer.exe spawned PowerShell establishing 
-    TCP reverse shell to 172.20.10.5 over port 443 masquerading as HTTPS. Event ID 4104 confirmed 
-    script execution. Endpoint contained, attacker C2 severed.
+    Built a detection lab with Wazuh SIEM and Kali Linux. Generated a PowerShell reverse shell using Villain C2 
+    targeting port 443 for HTTPS evasion. Detected the alert, analyzed Event ID 4104 script blocks, traced the 
+    attack chain (Explorer.exe → PowerShell → C2), and executed containment procedures. Full incident response 
+    cycle from attack to remediation.
   </p>
   <span class="tag">Reverse Shell</span>
   <span class="tag">PowerShell</span>
-  <span class="tag">Villain</span>
+  <span class="tag">Villain C2</span>
+  <span class="tag">Wazuh SIEM</span>
   <span class="tag">Incident Response</span>
-  <span class="tag">Wazuh</span>
-  <span class="tag">Kali linux</span>
+  <span class="tag">Home Lab</span>
 </a>
     </div>
   </section>
@@ -319,8 +320,8 @@
  
   <!-- TOOLS SECTION -->
 <section id="tools">
-  <h2>Python Tools</h2>
-  <p style="color: var(--muted); margin-bottom: 1.5rem;">Basic Python scripts I wrote while learning. These are beginner projects.</p>
+  <h2>Custom Security Tools</h2>
+  <p style="color: var(--muted); margin-bottom: 1.5rem;">Security-focused Python utilities built for reconnaissance and enumeration tasks.</p>
   <div class="grid">
     
     <!-- Tool 1: Port Scanner -->
@@ -352,18 +353,6 @@
 </section>
    
   
-
-  <!-- RESUME SECTION -->
-  <section id="resume">
-    <h2>Resume</h2>
-    <p>
-      <a href="Oshunsan_Samuel_Junior_Pentester_CV.pdf" class="download-button">
-        📄 Download Resume (PDF)
-      </a>
-    </p>
-  
-  </section>
-
 <!-- CONTACT SECTION -->
 <section id="contact">
   <h2>Contact & Links</h2>
