@@ -47,7 +47,8 @@ async function showDetail(pageId) {
         'writeup-detail-2': 'writeups/writeup-detail-2.html',
         'tool-detail-1': 'tools/tool-detail-1.html',
         'tool-detail-2': 'tools/tool-detail-2.html',
-        'tool-detail-3': 'tools/tool-detail-3.html'
+        'tool-detail-3': 'tools/tool-detail-3.html',
+        'tool-detail-4': 'tools/tool-detail-4.html',
     };
     
     // Hide all sections

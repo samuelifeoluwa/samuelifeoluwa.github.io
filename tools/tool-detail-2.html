@@ -18,6 +18,12 @@
   </div>
 
   <div class="step">
+  <h3>How it works</h3>
+  <p>Banner grabbing is a basic recon technique: connect to an open port and read whatever the service sends back before you've said anything. Many services — FTP, SMTP, SSH, and others — announce their name and version immediately on connection.</p>
+  <p>This script opens a single TCP socket to the target IP and port, then calls <code>recv(1024)</code> to read up to 1024 bytes of the service's initial response. That raw byte string is decoded into readable text and printed. Note there's no timeout set, so if a service doesn't send data immediately on connect (many modern HTTP servers won't), the script will hang waiting.</p>
+</div>
+
+  <div class="step">
     <h3>Code</h3>
     <div class="command-box">
       <code>

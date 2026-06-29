@@ -17,6 +17,12 @@
   </div>
 
   <div class="step">
+  <h3>How it works</h3>
+  <p>This script demonstrates how port scanning works at the raw socket level, without relying on nmap. After asking for a target IP, it offers five scan modes — single port, range, comma-separated list, common ports (1–1000), or all ports (1–65535) — and builds a list of ports to check based on your choice.</p>
+  <p>The core logic lives in <code>scan_port()</code>: for each port, it opens a TCP socket, sets a 1-second timeout, and calls <code>connect_ex()</code>, which attempts the connection and returns an error code instead of raising an exception on failure. A return value of <code>0</code> means the TCP handshake succeeded, so the port is open. Ports are checked one at a time with no threading, so a full 65535-port scan is slow by design — this script shows the underlying mechanics rather than competing with nmap on speed.</p>
+</div>
+
+  <div class="step">
     <h3>Code</h3>
     <div class="command-box">
       <code>

@@ -18,6 +18,12 @@
   </div>
 
   <div class="step">
+  <h3>How it works</h3>
+  <p>This scraper enumerates links from a page — useful during recon for discovering subpages, parameters, or third-party resources a target site references. It uses <code>requests.get()</code> to fetch the page's raw HTML, then hands that to BeautifulSoup, which parses it into a navigable tag tree.</p>
+  <p><code>soup.find_all('a', href=True)</code> searches that tree for every <code>&lt;a&gt;</code> tag that actually has an <code>href</code> attribute, filtering out anchor tags used only for JS click handlers with no real link. Each href is printed as-is. It's intentionally minimal — no deduplication, domain filtering, or recursion — so it works best as a building block you pipe into further filtering rather than a full crawler.</p>
+</div>
+
+  <div class="step">
     <h3>Code</h3>
     <div class="command-box">
       <code>
