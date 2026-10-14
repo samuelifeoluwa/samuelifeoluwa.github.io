@@ -44,6 +44,7 @@
     <a href="#skills" class="nav-link">Skills</a>
     <a href="#certifications" class="nav-link">Certifications</a>
     <a href="#labs" class="nav-link">Labs</a>
+    <a href="#writeups" class="nav-link">Writeups</a>
     <a href="#tools" class="nav-link">Tools</a> 
     <a href="#contact" class="nav-link">Contact</a>
   </nav>
@@ -58,8 +59,7 @@
     I design and run my own lab environments to simulate real-world attacks and sharpen my defenses — from deploying <strong>Wazuh SIEM</strong> and tuning detection rules to triggering and responding to alerts through controlled red team exercises.
   </p>
   <p>
-    Currently pursuing my <strong>eJPT certification</strong> to validate my penetration testing foundation, with the goal of contributing to a <strong>Security Operations (SOC)</strong> or <strong>Penetration Testing</strong> team.
-  </p>
+    I hold the <strong>eJPT (eLearnSecurity Junior Penetration Tester)</strong> certification and am working toward the <strong>PNPT</strong> and <strong>OSCP</strong>, with the goal of contributing to a <strong>Security Operations (SOC)</strong> or <strong>Penetration Testing</strong> team.
 </section>
 
   <!-- SKILLS SECTION -->
@@ -143,9 +143,10 @@
 
   <!-- LABS SECTION -->
   <section id="labs">
-    <h2>Labs & Projects</h2>
+    <h2>Labs &amp; Projects</h2>
+    <p style="color: var(--muted); margin-bottom: 1rem;">Grouped by focus — offensive (Red Team) and defensive/SOC (Blue Team). Labs that span both are listed in each.</p>
+    <h3 class="lab-category red">🔴 Red Team Labs</h3>
     <div class="grid">
-      <!-- Lab 1 -->
       <a href="#" class="card lab-card" data-detail="lab-detail-1">
         <h3>Windows 7 MS17-010 EternalBlue Exploitation</h3>
         <p>
@@ -157,8 +158,6 @@
         <span class="tag">Privilege Escalation</span>
         <span class="tag">Post-Exploitation</span>
       </a>
-
-      <!-- Lab 2 -->
       <a href="#" class="card lab-card" data-detail="lab-detail-2">
         <h3>Metasploitable2 Exploitation</h3>
         <p>
@@ -169,8 +168,6 @@
         <span class="tag">Nmap</span>
         <span class="tag">Reconnaissance</span>
       </a>
-
-      <!-- Lab 3 -->
       <a href="#" class="card lab-card" data-detail="lab-detail-3">
         <h3>Windows 10 Payload Obfuscation & Persistence</h3>
         <p>
@@ -184,8 +181,6 @@
         <span class="tag">Villain C2</span>
         <span class="tag">BAT2EXE</span>
       </a>
-
-      <!-- Lab 4 -->
       <a href="#" class="card lab-card" data-detail="lab-detail-4">
         <h3>Web Application Vulnerability Assessment</h3>
         <p>
@@ -196,8 +191,6 @@
         <span class="tag">Misconfigurations</span>
         <span class="tag">API Security</span>
       </a>
-
-      <!-- Lab 5 -->
       <a href="#" class="card lab-card" data-detail="lab-detail-5">
         <h3>Wireless Attacks - WPA2 Cracking</h3>
         <p>
@@ -208,8 +201,6 @@
         <span class="tag">WPA2</span>
         <span class="tag">Hashcat</span>
       </a>
-
-      <!-- Lab 6 -->
       <a href="#" class="card lab-card" data-detail="lab-detail-6">
         <h3>SSH Brute Force Testing (Honeypot)</h3>
         <p>
@@ -220,9 +211,7 @@
         <span class="tag">Hydra</span>
         <span class="tag">SSH</span>
       </a>
-
-      <!-- Lab 7 -->
-     <a href="#" class="card lab-card" data-detail="lab-detail-7">
+      <a href="#" class="card lab-card" data-detail="lab-detail-7">
   <h3>Windows 10 SMB Hash Capture & Cracking</h3>
   <p>
     Used Responder to capture NTLMv2 hashes from a Windows 10 target via SMB, then cracked the hashes with Hashcat and the rockyou.txt wordlist. Demonstrated the dangers of SMB signing not being enforced.
@@ -233,71 +222,7 @@
   <span class="tag">Hashcat</span>
   <span class="tag">Windows 10</span>
 </a>
-
-<!-- Lab 8 -->
-<a href="#" class="card lab-card" data-detail="lab-detail-8">
-  <h3>CVE-2024-3400 - Palo Alto PAN-OS Command Injection Analysis</h3>
-  <p>
-    Analyzed a critical command injection vulnerability (CVE-2024-3400) in Palo Alto Networks GlobalProtect feature. 
-    Identified malicious POST request with path traversal and command injection payload (SESSID cookie). 
-    Traced attacker IP (144.172.79.92) flagged by 12 threat intel vendors. Confirmed successful exploitation 
-    via malicious python3 process (update.py) with 37/63 VT detection rate.
-  </p>
-  <span class="tag">CVE-2024-3400</span>
-  <span class="tag">Command Injection</span>
-  <span class="tag">Path Traversal</span>
-  <span class="tag">Threat Intelligence</span>
-  <span class="tag">PAN-OS</span>
-  <span class="tag">Incident Response</span>
-</a>
-
-  
-  <!-- Lab 9 -->
-    <a href="#" class="card lab-card" data-detail="lab-detail-9">
-      <h3>SOC338 - Lumma Stealer Phishing Analysis</h3>
-      <p>
-        Analyzed a phishing email claiming a free Windows 11 Pro upgrade. Identified malicious sender domain (windows-update.site) 
-        and SMTP IP (132.232.40.201) flagged by VirusTotal. Traced victim browser history to malicious site. 
-        Found suspicious processes on victim system. Contained the endpoint after confirming compromise.
-      </p>
-      <span class="tag">Phishing Analysis</span>
-      <span class="tag">Lumma Stealer</span>
-      <span class="tag">Threat Intelligence</span>
-      <span class="tag">Incident Response</span>
-      <span class="tag">Email Analysis</span>
-    </a>
-    
-    <!-- Lab 10 -->
-<!-- Lab 10 - Short Version -->
-<a href="#" class="card lab-card" data-detail="lab-detail-10">
-  <h3>SOC335 — CVE-2024-49138 Exploitation (Windows Kernel Privilege Escalation)</h3>
-  <p>
-    Critical alert on host "victor" (172.16.17.207). Malicious hash (50/72 VT) and S3 URL confirmed. 
-    Contained endpoint immediately. Reconstructed attack chain from PowerShell history: whoami /priv → 
-    downloaded password-protected ZIP (infected) → extracted via 7-Zip → executed svohost.exe (PID 7640). 
-    Escalated to Tier 2.
-  </p>
-  <span class="tag">CVE-2024-49138</span>
-  <span class="tag">Privilege Escalation</span>
-  <span class="tag">PowerShell</span>
-  <span class="tag">Containment</span>
-  <span class="tag">Incident Response</span>
-</a>
- <!-- Lab 11 - Short Version -->
-<!-- <a href="#" class="card lab-card" data-detail="lab-detail-11">
-  <h3>SOC342 — CVE-2025-53770 SharePoint Auth Bypass & RCE</h3>
-  <p>
-    Critical alert on SharePoint01 (172.16.20.17) from 107.191.58.76. Unauthenticated POST to ToolPane.aspx 
-    triggered deserialization RCE. Web shell deployed, MachineKey exfiltrated. Contained immediately. Escalated.
-  </p>
-  <span class="tag">CVE-2025-53770</span>
-  <span class="tag">SharePoint RCE</span>
-  <span class="tag">Authentication Bypass</span>
-  <span class="tag">Incident Response</span>
-</a> -->
-
-<!-- Lab 12 - Home Lab Reverse Shell -->
-<a href="#" class="card lab-card" data-detail="lab-detail-12">
+      <a href="#" class="card lab-card" data-detail="lab-detail-12">
   <h3>Home Lab — PowerShell TCP Reverse Shell Detection & Response</h3>
   <p>
     Built a detection lab with Wazuh SIEM and Kali Linux. Generated a PowerShell reverse shell using Villain C2 
@@ -313,10 +238,98 @@
   <span class="tag">Home Lab</span>
 </a>
     </div>
+    <h3 class="lab-category blue">🔵 Blue Team / SOC Labs</h3>
+    <div class="grid">
+      <a href="#" class="card lab-card" data-detail="lab-detail-8">
+  <h3>CVE-2024-3400 - Palo Alto PAN-OS Command Injection Analysis</h3>
+  <p>
+    Analyzed a critical command injection vulnerability (CVE-2024-3400) in Palo Alto Networks GlobalProtect feature. 
+    Identified malicious POST request with path traversal and command injection payload (SESSID cookie). 
+    Traced attacker IP (144.172.79.92) flagged by 12 threat intel vendors. Confirmed successful exploitation 
+    via malicious python3 process (update.py) with 37/63 VT detection rate.
+  </p>
+  <span class="tag">CVE-2024-3400</span>
+  <span class="tag">Command Injection</span>
+  <span class="tag">Path Traversal</span>
+  <span class="tag">Threat Intelligence</span>
+  <span class="tag">PAN-OS</span>
+  <span class="tag">Incident Response</span>
+</a>
+      <a href="#" class="card lab-card" data-detail="lab-detail-9">
+      <h3>SOC338 - Lumma Stealer Phishing Analysis</h3>
+      <p>
+        Analyzed a phishing email claiming a free Windows 11 Pro upgrade. Identified malicious sender domain (windows-update.site) 
+        and SMTP IP (132.232.40.201) flagged by VirusTotal. Traced victim browser history to malicious site. 
+        Found suspicious processes on victim system. Contained the endpoint after confirming compromise.
+      </p>
+      <span class="tag">Phishing Analysis</span>
+      <span class="tag">Lumma Stealer</span>
+      <span class="tag">Threat Intelligence</span>
+      <span class="tag">Incident Response</span>
+      <span class="tag">Email Analysis</span>
+    </a>
+      <a href="#" class="card lab-card" data-detail="lab-detail-10">
+  <h3>SOC335 — CVE-2024-49138 Exploitation (Windows Kernel Privilege Escalation)</h3>
+  <p>
+    Critical alert on host "victor" (172.16.17.207). Malicious hash (50/72 VT) and S3 URL confirmed. 
+    Contained endpoint immediately. Reconstructed attack chain from PowerShell history: whoami /priv → 
+    downloaded password-protected ZIP (infected) → extracted via 7-Zip → executed svohost.exe (PID 7640). 
+    Escalated to Tier 2.
+  </p>
+  <span class="tag">CVE-2024-49138</span>
+  <span class="tag">Privilege Escalation</span>
+  <span class="tag">PowerShell</span>
+  <span class="tag">Containment</span>
+  <span class="tag">Incident Response</span>
+</a>
+      <a href="#" class="card lab-card" data-detail="lab-detail-12">
+  <h3>Home Lab — PowerShell TCP Reverse Shell Detection & Response</h3>
+  <p>
+    Built a detection lab with Wazuh SIEM and Kali Linux. Generated a PowerShell reverse shell using Villain C2 
+    targeting port 443 for HTTPS evasion. Detected the alert, analyzed Event ID 4104 script blocks, traced the 
+    attack chain (Explorer.exe → PowerShell → C2), and executed containment procedures. Full incident response 
+    cycle from attack to remediation.
+  </p>
+  <span class="tag">Reverse Shell</span>
+  <span class="tag">PowerShell</span>
+  <span class="tag">Villain C2</span>
+  <span class="tag">Wazuh SIEM</span>
+  <span class="tag">Incident Response</span>
+  <span class="tag">Home Lab</span>
+</a>
+      <a href="#" class="card lab-card" data-detail="lab-detail-13">
+        <h3>SOC Home Lab — Villain C2 Reverse Shell Detection in Splunk</h3>
+        <p>
+          Full purple-team investigation: executed a Villain C2 PowerShell reverse shell against a Sysmon-monitored
+          Windows 10 host, then reconstructed the entire attack chain in Splunk — IP pivot, process lineage, C2 callback
+          over TCP 443, a PE disguised as a .jpeg, ingress tool transfer, and the Sysmon-only visibility gaps. Enriched
+          with VirusTotal and mapped to MITRE ATT&amp;CK.
+        </p>
+        <span class="tag">Splunk</span>
+        <span class="tag">Sysmon</span>
+        <span class="tag">Threat Detection</span>
+        <span class="tag">MITRE ATT&amp;CK</span>
+        <span class="tag">Villain C2</span>
+        <span class="tag">Incident Response</span>
+      </a>
+    </div>
   </section>
 
   <!-- WRITEUPS SECTION -->
- 
+  <section id="writeups">
+    <h2>Write-ups</h2>
+    <p style="color: var(--muted); margin-bottom: 1.5rem;">Reflections and analysis — the thinking behind the hands-on work.</p>
+    <div class="grid">
+      <a href="#" class="card writeup-card" data-detail="writeup-detail-1">
+        <h3>Exposed PII on Public Data-Broker Sites</h3>
+        <p>An OSINT ethics reflection: how a public data-broker site exposed detailed personal information, where my approach to disclosure went wrong, and why consent — not just legality — is the line that matters.</p>
+        <span class="tag">OSINT</span>
+        <span class="tag">Ethics</span>
+        <span class="tag">Privacy</span>
+        <span class="tag">Responsible Disclosure</span>
+      </a>
+    </div>
+  </section>
   <!-- TOOLS SECTION -->
 <section id="tools">
   <h2>Custom Security Tools</h2>
@@ -383,11 +396,10 @@
 <div id="lab-detail-10" class="detail-page" style="display: none;"></div>
 <!-- <div id="lab-detail-11" class="detail-page" style="display: none;"></div> -->
 <div id="lab-detail-12" class="detail-page" style="display: none;"></div>
+<div id="lab-detail-13" class="detail-page" style="display: none;"></div>
 
 <!-- Include writeup detail pages -->
-<!-- <div id="writeup-detail-1" class="detail-page" style="display: none;"></div>
-<div id="writeup-detail-2" class="detail-page" style="display: none;"></div>
--->
+<div id="writeup-detail-1" class="detail-page" style="display: none;"></div>
 
 
 <div id="tool-detail-1" class="detail-page" style="display: none;"></div>

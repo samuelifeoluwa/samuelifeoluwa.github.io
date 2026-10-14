@@ -219,8 +219,6 @@ run_nmap(){
 
 report(){
     section "Generating Report"
-    report(){
-    section "Generating Report"
 
     # display scan type
     if [[ "$full_scan" == "true" ]]; then
@@ -305,7 +303,6 @@ report(){
         section "UDP Script Scan (-sC) Findings"
         awk '/^[0-9]+\/udp/{port=$0; print_block=1; next} /^[0-9]+\/tcp/{print_block=0} /^\| / && print_block{print port; print; port=""}' "$outdir/udp_scan.txt" | uniq
     fi
-}   
 }
 
 field_validationChecks

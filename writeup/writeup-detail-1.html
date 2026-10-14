@@ -1,47 +1,62 @@
-<!-- Windows Defender Evasion Basics Writeup -->
+<!-- Exposed PII on Public Data-Broker Sites — OSINT Ethics Reflection -->
 <div class="detail-header">
   <a href="#" class="back-button">← Back to Portfolio</a>
-  <h1>Windows Defender Evasion Basics</h1>
-  <p><span class="tag">Evasion</span> <span class="tag">Obfuscation</span> <span class="tag">Defender Bypass</span> <span class="tag">PowerShell</span></p>
+  <h1>Exposed PII on Public Data-Broker Sites</h1>
+  <p>
+    <span class="tag">OSINT</span>
+    <span class="tag">Ethics</span>
+    <span class="tag">Privacy</span>
+    <span class="tag">Responsible Disclosure</span>
+  </p>
 </div>
 
 <div class="detail-content">
+
   <div class="step">
-    <h3>Introduction</h3>
-    <p>Overview of basic payload obfuscation techniques used to reduce detection while maintaining functionality. Includes backtick splitting, variable renaming, and string concatenation methods.</p>
+    <h3>Overview</h3>
+    <p>A short reflection on a privacy issue I came across, what I did about it, where my reasoning went wrong, and the
+       principle I would apply next time. The point of this piece is the judgement call, not the data — so no site is
+       named and no real personal information is reproduced.</p>
   </div>
-  
+
   <div class="step">
-    <h3>Technique 1: Backtick Character Splitting</h3>
-    <div class="command-box">
-      Original: New-Object<br>
-      Obfuscated: N`e`w-`O`b`j`e`c`t<br>
-      Original: Out-String<br>
-      Obfuscated: O`u`t-`S`t`r`i`n`g
+    <h3>What I found</h3>
+    <p>While browsing, I found a public data-broker site that exposes individuals' full names, known addresses, phone
+       numbers, relatives, and criminal/traffic records. To test its reach, I searched several names; coverage appeared
+       limited to US residents. Using only free, unauthenticated searches — no payment or subscription — I retrieved full
+       names, addresses, phone numbers, and records for several of my own relatives and a couple of friends. This was only
+       partial data; the full profiles sit behind a paywall.</p>
+  </div>
+
+  <div class="step">
+    <h3>Why I thought it was fine</h3>
+    <p>My reasoning drew on passive reconnaissance in ethical hacking: you gather information without interacting with the
+       target, and if you find a risk, you may report it to the owner. Reporting is legal. Exploiting the finding without
+       explicit permission is not — and disclosing it afterward does not undo that.</p>
+  </div>
+
+  <div class="step">
+    <h3>Where my reasoning broke</h3>
+    <p>My error was in the model, not the method. Responsible disclosure fits a system owner with a fixable flaw. An
+       individual has no flaw to patch and never opted into a disclosure relationship, so the same approach reads as
+       intrusion, not help. Consent, not legality, was the missing piece.</p>
+  </div>
+
+  <div class="step">
+    <h3>The corrected principle</h3>
+    <div class="note">
+      Obtain consent before performing OSINT on an individual. A simple "Can I show you what's publicly exposed about
+      you?" reframes it from intrusion to assistance.
     </div>
-    <p>PowerShell treats backticks as escape characters but ignores them when parsing cmdlets.</p>
   </div>
-  
+
   <div class="step">
-    <h3>Technique 2: Variable Name Obfuscation</h3>
-    <div class="command-box">
-      Original: $client = New-Object System.Net.Sockets.TCPClient<br>
-      Obfuscated: $fglarowugbycc = N`e`w-`O`b`j`e`c`t System.Net.Sockets.TCPClient
-    </div>
-    <p>Using random, non-descriptive variable names avoids signature-based detection.</p>
+    <h3>Takeaways</h3>
+    <ul>
+      <li><strong>Ask first</strong> — consent before you look.</li>
+      <li><strong>Disclose privately</strong> — to help the affected person only.</li>
+      <li><strong>Never broadcast</strong> — don't share the details onward.</li>
+    </ul>
   </div>
-  
-  <div class="step">
-    <h3>Technique 3: String Concatenation</h3>
-    <div class="command-box">
-      Original: "PowerShell"<br>
-      Obfuscated: "Pow" + "er" + "Shell"
-    </div>
-    <p>Breaking strings into multiple parts prevents simple pattern matching.</p>
-  </div>
-  
-  <div class="step">
-    <h3>Conclusion</h3>
-    <p>Combining multiple obfuscation techniques significantly increases the chance of bypassing signature-based AV solutions. However, modern EDR solutions with behavioral analysis may still detect malicious activity.</p>
-  </div>
+
 </div>

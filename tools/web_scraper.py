@@ -1,11 +1,18 @@
+import sys
 import requests
 from bs4 import BeautifulSoup
-import re
 
-input_url = ('Enter the Url of the website you want to scrape: ')
-url = input_url
-res = requests.get(url)
+url = input('Enter the URL of the website you want to scrape: ').strip()
+if not url.startswith(('http://', 'https://')):
+    url = 'https://' + url
+
+try:
+    res = requests.get(url, timeout=10, headers={'User-Agent': 'portfolio-scraper/1.0'})
+    res.raise_for_status()
+except requests.RequestException as e:
+    print(f'[!] Request failed: {e}')
+    sys.exit(1)
+
 soup = BeautifulSoup(res.content, 'html.parser')
 for link in soup.find_all('a', href=True):
-    print(link.get('href'))
-
+    print(link['href'])
