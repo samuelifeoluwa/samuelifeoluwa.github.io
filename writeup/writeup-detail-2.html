@@ -1,0 +1,266 @@
+<!-- Anatomy of a Banco do Brasil Tax-Refund Phishing Email -->
+<style>
+  /* Scoped to this write-up only — keeps screenshots compact and centred */
+  #writeup-detail-2 .lab-image img { max-width: 460px; max-height: 340px; height: auto; }
+  #writeup-detail-2 .lab-image { padding: 0.6rem; }
+  #writeup-detail-2 .lure-quote {
+    border-left: 3px solid #60a5fa; margin: 1rem 0; padding: 0.7rem 1rem;
+    color: #cbd5e1; background: #0a0e15; border-radius: 4px; line-height: 1.6;
+  }
+</style>
+<div class="detail-header">
+  <a href="#" class="back-button">← Back to Portfolio</a>
+  <h1>Anatomy of a Banco do Brasil Tax-Refund Phishing Email</h1>
+  <p>
+    <span class="tag">Phishing Analysis</span>
+    <span class="tag">Email Forensics</span>
+    <span class="tag">SPF / DKIM / DMARC</span>
+    <span class="tag">Threat Intel</span>
+    <span class="tag">CyberChef</span>
+    <span class="tag">Blue Team</span>
+  </p>
+</div>
+
+<div class="detail-content">
+
+  <!-- ============ SUMMARY / VERDICT ============ -->
+  <div class="step">
+    <h3>Summary &amp; Verdict</h3>
+    <p>
+      This is a Portuguese-language phishing email impersonating <strong>Banco do Brasil (BB)</strong>, one of Brazil's
+      largest banks. It is built around an <strong>IRPF</strong> (<em>Imposto de Renda Pessoa Física</em> — Brazilian
+      personal income tax) refund lure, a seasonal theme attackers lean on heavily around tax time. Despite passing every
+      email-authentication check, it is phishing with <strong>high confidence</strong>.
+    </p>
+    <p>
+      The verdict rests on three findings, developed in detail below: the message was sent from a throwaway Gmail account
+      impersonating a national bank — a <strong>domain-versus-brand mismatch</strong>; its true origin and relay
+      infrastructure were already reported for abuse; and its embedded link pointed to an Azure-hosted
+      credential-harvesting page that had since been taken down. No part of the analysis required executing the payload.
+    </p>
+  </div>
+
+  <!-- ============ 1. THE LURE ============ -->
+  <div class="step">
+    <h3>1. The Lure</h3>
+    <p>
+      The email presents a polished Banco do Brasil notice claiming that a refund of <strong>R$ 4.593,21</strong> is
+      available and will be credited to the recipient's account within 24 hours, behind a single prominent
+      <strong>CLIQUE AQUI</strong> ("click here") button. It pulls the three classic social-engineering levers at once:
+      <em>money</em> (an unclaimed refund), <em>authority</em> (a national bank), and <em>urgency</em> (a 24-hour
+      window). It even reproduces Banco do Brasil's genuine registration number, <code>CNPJ 00.000.000/0001-91</code>,
+      as a legitimacy prop — a real, publicly-available detail stitched onto a fake notice to make it harder to dismiss.
+    </p>
+    <p>Translated to English, the notice reads:</p>
+    <div class="lure-quote">
+      <strong>Notification – BANCO DO BRASIL S.A</strong><br>
+      CNPJ: 00.000.000/0001-91<br><br>
+      You have a refund of available funds — receive it now in your account.<br>
+      <strong>Available amount: R$ 4,593.21</strong><br>
+      [ CLICK HERE ]<br><br>
+      After the request, the amount will be automatically credited to your account within 24 hours.
+    </div>
+    <div class="lab-image">
+      <img src="assets/images/phishing-bb/fig01-email.png" alt="Rendered Banco do Brasil phishing email" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 The phishing email as the victim sees it — a spoofed Banco do Brasil refund notice.</div>
+    </div>
+  </div>
+
+  <!-- ============ 2. HEADER & AUTHENTICATION ANALYSIS ============ -->
+  <div class="step">
+    <h3>2. Header &amp; Authentication Analysis</h3>
+    <p>
+      Email headers are written in order, so the <em>earliest</em> handling server sits at the bottom of the
+      <code>Received</code> chain and each later hop is prepended above it. Reading from the bottom up therefore
+      reconstructs the message's real path — and that path did not begin at any bank. The earliest hop shows the message
+      was submitted from a host at <code>20.97.213.223</code> into <code>smtp.gmail.com</code> using
+      <code>ESMTPSA</code>. The trailing "A" denotes an <em>authenticated</em> submission: a valid Gmail login was used
+      to send it, which means the account is either attacker-registered or compromised — not spoofed.
+    </p>
+    <p>
+      From there the message relayed through Google's infrastructure
+      (<code>mail-qt1-f178.google.com</code>, <code>209.85.160.178</code>) and was received by Microsoft's Office 365
+      protection stack. SPF, DKIM and DMARC all returned <strong>pass</strong> — and that is exactly the trap.
+    </p>
+    <p>
+      The decisive indicator is the <strong>domain-versus-brand mismatch</strong>. Those authentication checks validate
+      the sending domain — <code>gmail.com</code> — not the "Banco do Brasil" brand the victim sees. Because the mail
+      genuinely was sent through Gmail from a real Gmail account, SPF/DKIM/DMARC <em>correctly</em> pass; they are
+      doing their job. The brand only ever appears in the display name and the attachment image, neither of which any
+      protocol authenticates. A legitimate Banco do Brasil message would arrive from a <code>bancodobrasil.com.br</code>
+      domain, never a personal Gmail address.
+    </p>
+    <div class="note">
+      <strong>Key takeaway:</strong> "Did authentication pass?" is the wrong question. The right one is
+      "<em>does the authenticated domain match the sender it claims to be?</em>" Passing SPF/DKIM/DMARC confirms who
+      sent the mail, not that the mail is safe.
+    </div>
+  </div>
+
+  <!-- ============ 3. SENDER INFRASTRUCTURE / IP REPUTATION ============ -->
+  <div class="step">
+    <h3>3. Sender Infrastructure &amp; IP Reputation</h3>
+    <p>
+      Both relevant hops were enriched against reputation sources. The true origin, <code>20.97.213.223</code>, belongs
+      to <strong>Microsoft Azure</strong> (Boydton, Virginia) and had already been reported on AbuseIPDB for hacking and
+      brute-force activity — consistent with a disposable cloud VM spun up to send mail and discarded. The Google relay,
+      <code>209.85.160.178</code>, carried 168 abuse reports for email spam, which is expected for a shared outbound mail
+      server but still worth noting.
+    </p>
+    <p>
+      One pattern ties the infrastructure together: the attacker is <strong>Azure-centric on both ends</strong>. The
+      sending host is an Azure VM, and — as the link analysis shows — the phishing page itself is hosted on Azure static
+      storage. Reusing one cloud provider for both sending and hosting is cheap and fast to stand up, which is precisely
+      why it suits low-effort, high-volume campaigns.
+    </p>
+    <div class="lab-image">
+      <img src="assets/images/phishing-bb/fig03-ip-origin.png" alt="AbuseIPDB result for origin IP 20.97.213.223" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 True origin 20.97.213.223 — a Microsoft Azure host (Boydton, VA), reported for hacking / brute-force.</div>
+    </div>
+    <div class="lab-image">
+      <img src="assets/images/phishing-bb/fig04-ip-relay.png" alt="AbuseIPDB result for relay IP 209.85.160.178" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 Google relay 209.85.160.178 (mail-qt1-f178) — reported 168× for email spam.</div>
+    </div>
+  </div>
+
+  <!-- ============ 4. PAYLOAD ANALYSIS ============ -->
+  <div class="step">
+    <h3>4. Payload &amp; Encoding Analysis</h3>
+    <p>
+      The <code>From</code> and <code>Subject</code> headers were not plain text — they were wrapped as
+      <strong>RFC 2047 encoded-words</strong> (the <code>=?utf-8?B?…?=</code> form), a legitimate mechanism for carrying
+      non-ASCII characters in headers that also conveniently hides the content from a casual glance. Base64-decoding them
+      exposed the impersonation and the lure in clear text: the display name
+      <em>"[BB] - Seu saldo foi liberado - Código: 11084339647130851921"</em> and the subject
+      <em>"Liberação de IRPF"</em> (Release of Income-Tax Refund).
+    </p>
+    <p>
+      The attachment's <code>Content-Type</code> claimed to be a PDF — but Content-Type is attacker-controlled metadata
+      and can say anything. Rather than trust it, I decoded the Base64 body and verified the file by its
+      <strong>signature (magic bytes)</strong>: the decoded stream begins with <code>%PDF</code>, which confirms a
+      genuine PDF regardless of what the headers claim. CyberChef then rendered it, reproducing the branded refund notice.
+    </p>
+    <p>
+      Two deliberate evasion choices stand out. First, the entire notice is <strong>text rendered as an image</strong> —
+      there is no selectable text for a content filter to key on (words like <em>restituição</em> or <em>clique aqui</em>
+      are invisible to a scanner). Second, it is delivered <strong>inside a PDF attachment</strong>, which smuggles the
+      clickable link past gateways that inspect the email body but do not follow links buried in attachments. Neither
+      technique is advanced, but together they meaningfully raise the odds of reaching an inbox.
+    </p>
+    <div class="command-box">Decoded From:    [BB] - Seu saldo foi liberado - Código: 11084339647130851921
+Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
+    <div class="lab-image">
+      <img src="assets/images/phishing-bb/fig09-from-header-decode.png" alt="CyberChef Base64 decode of the From header" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 Base64-decoded <code>From</code> display name — impersonating Banco do Brasil ("[BB]").</div>
+    </div>
+    <div class="lab-image">
+      <img src="assets/images/phishing-bb/fig06-subject-decode.png" alt="CyberChef Base64 decode of the Subject header" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 Base64-decoded <code>Subject</code> — "Liberação de IRPF" (Release of Income-Tax Refund).</div>
+    </div>
+    <div class="lab-image">
+      <img src="assets/images/phishing-bb/fig05-pdf-decode.png" alt="CyberChef rendering the Base64 body as a PDF" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 Verifying the attachment by signature — the Base64 body decodes to <code>%PDF</code> and renders as the branded notice.</div>
+    </div>
+  </div>
+
+  <!-- ============ 5. LINK ANALYSIS ============ -->
+  <div class="step">
+    <h3>5. Link Analysis</h3>
+    <p>
+      Rather than clicking the link, I extracted it from the decoded content and <strong>defanged</strong> it in
+      CyberChef — rewriting <code>https</code> to <code>hxxps</code> and <code>.</code> to <code>[.]</code> so the URL
+      can be shared and documented without anyone (or any tool) accidentally resolving it:
+    </p>
+    <div class="command-box">hxxps://okokoaksoa[.]z13[.]web[.]core[.]windows[.]net/</div>
+    <p>
+      The host is an <strong>Azure Blob static-website endpoint</strong> (<code>*.web.core.windows.net</code>). This is a
+      recurring abuse pattern: attackers host the credential-harvesting page on a trusted cloud provider's domain so it
+      inherits a Microsoft-owned hostname and a valid TLS certificate, which slips past naive "is it HTTPS / is the
+      domain reputable" checks. Submitting the URL to urlscan.io and Hybrid Analysis returned
+      <em>"domain does not exist"</em>, meaning the page had already been taken down or removed by the operator by the
+      time of analysis — common for short-lived phishing infrastructure.
+    </p>
+    <div class="lab-image">
+      <img src="assets/images/phishing-bb/fig07-url-extract.png" alt="CyberChef extract + defang of the payload URL" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 Extracting and defanging the embedded link in CyberChef — an Azure-hosted static page.</div>
+    </div>
+    <div class="lab-image">
+      <img src="assets/images/phishing-bb/fig08-sandbox.png" alt="Hybrid Analysis reporting the domain does not exist" onerror="this.style.display='none'">
+      <div class="lab-image-caption">📸 Hybrid Analysis — "domain does not exist": the phishing page was already taken down.</div>
+    </div>
+  </div>
+
+  <!-- ============ 6. INDICATORS OF COMPROMISE ============ -->
+  <div class="step">
+    <h3>6. Indicators of Compromise (IOCs)</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:0.95rem;">
+      <tbody>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><strong>Spoofed brand</strong></td>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);">Banco do Brasil S.A (BB)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><strong>Sender / Return-Path</strong></td>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><code>prestonconstance587@gmail.com</code></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><strong>Subject (decoded)</strong></td>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);">Liberação de IRPF - 6NwlyfzWcsNerv0</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><strong>Origin IP</strong></td>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><code>20.97.213.223</code> — Microsoft Azure (Boydton, VA)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><strong>Relay IP</strong></td>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><code>209.85.160.178</code> — Google (mail-qt1-f178)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><strong>Payload URL (defanged)</strong></td>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><code>hxxps://okokoaksoa[.]z13[.]web[.]core[.]windows[.]net/</code></td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);"><strong>Authentication</strong></td>
+          <td style="padding:8px 10px;border:1px solid rgba(255,255,255,0.12);">SPF pass · DKIM pass · DMARC pass (all on <code>gmail.com</code>)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ 7. CONCLUSION & RECOMMENDATIONS ============ -->
+  <div class="step">
+    <h3>7. Conclusion &amp; Recommendations</h3>
+    <p>
+      <strong>Verdict: phishing, high confidence.</strong> Three defensive takeaways:
+    </p>
+    <ul>
+      <li>Judge the authenticated sending domain against the brand being claimed. "Did authentication pass?" is the wrong
+          question; "does the authenticated domain match the sender it claims to be?" is the right one.</li>
+      <li>Treat links to newly-seen cloud-hosted domains such as <code>*.web.core.windows.net</code> with suspicion —
+          legitimate banks do not host customer portals on generic cloud-storage endpoints.</li>
+      <li>Reinforce user awareness around unsolicited refund and payout lures, which pair a financial incentive with
+          artificial urgency — and verify the attachment type by signature, never by its stated Content-Type.</li>
+    </ul>
+    <p>
+      A closing analyst's note: this sample is <em>convincing</em> but not <em>technically sophisticated</em> — a
+      throwaway Gmail account, a public CNPJ, text baked into an image, and a disposable Azure VM. The craft is in the
+      social engineering, not the tradecraft. Keeping those two apart is what stops an analyst from over-attributing a
+      commodity phish — and knowing the difference is half the job.
+    </p>
+  </div>
+
+    <!-- ============ SOURCE & RESPONSIBLE HANDLING ============ -->
+  <div class="step">
+    <h3>Source &amp; Responsible Handling</h3>
+    <p>
+      The sample analysed here is drawn from the public
+      <a href="https://github.com/rf-peixoto/phishing_pot" target="_blank" rel="noopener noreferrer">Phishing Pot</a>
+      corpus — an open research collection of real phishing emails. In line with responsible handling, the raw message
+      is not rehosted here, and the payload URL is defanged throughout; the live link is never reproduced.
+    </p>
+  </div>
+ 
+</div>
+
+
+</div>

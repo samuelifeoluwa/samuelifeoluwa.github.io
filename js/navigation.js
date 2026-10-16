@@ -45,6 +45,7 @@ async function showDetail(pageId) {
         'lab-detail-12': 'labs/lab-detail-12.html',
         'lab-detail-13': 'labs/lab-detail-13.html',
         'writeup-detail-1': 'writeup/writeup-detail-1.html',
+        'writeup-detail-2': 'writeup/writeup-detail-2.html',
         'tool-detail-1': 'tools/tool-detail-1.html',
         'tool-detail-2': 'tools/tool-detail-2.html',
         'tool-detail-3': 'tools/tool-detail-3.html',
