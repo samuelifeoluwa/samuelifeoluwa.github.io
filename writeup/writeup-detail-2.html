@@ -1,8 +1,12 @@
 <!-- Anatomy of a Banco do Brasil Tax-Refund Phishing Email -->
 <style>
-  /* Scoped to this write-up only — keeps screenshots compact and centred */
-  #writeup-detail-2 .lab-image img { max-width: 460px; max-height: 340px; height: auto; }
+  /* Scoped to this write-up only — compact, centred, and mobile-safe */
+  #writeup-detail-2 .lab-image img { max-width: min(460px, 100%); max-height: 340px; height: auto; }
   #writeup-detail-2 .lab-image { padding: 0.6rem; }
+  /* Mobile: stop long URLs / tables / images overflowing the screen */
+  #writeup-detail-2 .command-box { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
+  #writeup-detail-2 table { width: 100%; }
+  #writeup-detail-2 table td { word-break: break-word; overflow-wrap: anywhere; }
   #writeup-detail-2 .lure-quote {
     border-left: 3px solid #60a5fa; margin: 1rem 0; padding: 0.7rem 1rem;
     color: #cbd5e1; background: #0a0e15; border-radius: 4px; line-height: 1.6;
@@ -61,7 +65,7 @@
       After the request, the amount will be automatically credited to your account within 24 hours.
     </div>
     <div class="lab-image">
-      <img src="assets/images/Phishing-bb/fig01-email.png" alt="Rendered Banco do Brasil phishing email" onerror="this.style.display='none'">
+      <img src="assets/images/phishing-bb/fig01-email.png" alt="Rendered Banco do Brasil phishing email" onerror="this.style.display='none'">
       <div class="lab-image-caption">📸 The phishing email as the victim sees it — a spoofed Banco do Brasil refund notice.</div>
     </div>
   </div>
@@ -114,11 +118,11 @@
       why it suits low-effort, high-volume campaigns.
     </p>
     <div class="lab-image">
-      <img src="assets/images/Phishing-bb/fig03-ip-origin.png" alt="AbuseIPDB result for origin IP 20.97.213.223" onerror="this.style.display='none'">
+      <img src="assets/images/phishing-bb/fig03-ip-origin.png" alt="AbuseIPDB result for origin IP 20.97.213.223" onerror="this.style.display='none'">
       <div class="lab-image-caption">📸 True origin 20.97.213.223 — a Microsoft Azure host (Boydton, VA), reported for hacking / brute-force.</div>
     </div>
     <div class="lab-image">
-      <img src="assets/images/Phishing-bb/fig04-ip-relay.png" alt="AbuseIPDB result for relay IP 209.85.160.178" onerror="this.style.display='none'">
+      <img src="assets/images/phishing-bb/fig04-ip-relay.png" alt="AbuseIPDB result for relay IP 209.85.160.178" onerror="this.style.display='none'">
       <div class="lab-image-caption">📸 Google relay 209.85.160.178 (mail-qt1-f178) — reported 168× for email spam.</div>
     </div>
   </div>
@@ -150,15 +154,15 @@
     <div class="command-box">Decoded From:    [BB] - Seu saldo foi liberado - Código: 11084339647130851921
 Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
     <div class="lab-image">
-      <img src="assets/images/Phishing-bb/fig09-from-header-decode.png" alt="CyberChef Base64 decode of the From header" onerror="this.style.display='none'">
+      <img src="assets/images/phishing-bb/fig09-from-header-decode.png" alt="CyberChef Base64 decode of the From header" onerror="this.style.display='none'">
       <div class="lab-image-caption">📸 Base64-decoded <code>From</code> display name — impersonating Banco do Brasil ("[BB]").</div>
     </div>
     <div class="lab-image">
-      <img src="assets/images/Phishing-bb/fig06-subject-decode.png" alt="CyberChef Base64 decode of the Subject header" onerror="this.style.display='none'">
+      <img src="assets/images/phishing-bb/fig06-subject-decode.png" alt="CyberChef Base64 decode of the Subject header" onerror="this.style.display='none'">
       <div class="lab-image-caption">📸 Base64-decoded <code>Subject</code> — "Liberação de IRPF" (Release of Income-Tax Refund).</div>
     </div>
     <div class="lab-image">
-      <img src="assets/images/Phishing-bb/fig05-pdf-decode.png" alt="CyberChef rendering the Base64 body as a PDF" onerror="this.style.display='none'">
+      <img src="assets/images/phishing-bb/fig05-pdf-decode.png" alt="CyberChef rendering the Base64 body as a PDF" onerror="this.style.display='none'">
       <div class="lab-image-caption">📸 Verifying the attachment by signature — the Base64 body decodes to <code>%PDF</code> and renders as the branded notice.</div>
     </div>
   </div>
@@ -181,11 +185,11 @@ Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
       time of analysis — common for short-lived phishing infrastructure.
     </p>
     <div class="lab-image">
-      <img src="assets/images/Phishing-bb/fig07-url-extract.png" alt="CyberChef extract + defang of the payload URL" onerror="this.style.display='none'">
+      <img src="assets/images/phishing-bb/fig07-url-extract.png" alt="CyberChef extract + defang of the payload URL" onerror="this.style.display='none'">
       <div class="lab-image-caption">📸 Extracting and defanging the embedded link in CyberChef — an Azure-hosted static page.</div>
     </div>
     <div class="lab-image">
-      <img src="assets/images/Phishing-bb/fig08-sandbox.png" alt="Hybrid Analysis reporting the domain does not exist" onerror="this.style.display='none'">
+      <img src="assets/images/phishing-bb/fig08-sandbox.png" alt="Hybrid Analysis reporting the domain does not exist" onerror="this.style.display='none'">
       <div class="lab-image-caption">📸 Hybrid Analysis — "domain does not exist": the phishing page was already taken down.</div>
     </div>
   </div>
@@ -193,6 +197,7 @@ Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
   <!-- ============ 6. INDICATORS OF COMPROMISE ============ -->
   <div class="step">
     <h3>6. Indicators of Compromise (IOCs)</h3>
+    <div style="overflow-x:auto;">
     <table style="width:100%;border-collapse:collapse;font-size:0.95rem;">
       <tbody>
         <tr>
@@ -225,6 +230,7 @@ Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <!-- ============ 7. CONCLUSION & RECOMMENDATIONS ============ -->
@@ -249,18 +255,15 @@ Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
     </p>
   </div>
 
-    <!-- ============ SOURCE & RESPONSIBLE HANDLING ============ -->
+  <!-- ============ SOURCE & RESPONSIBLE HANDLING ============ -->
   <div class="step">
     <h3>Source &amp; Responsible Handling</h3>
     <p>
       The sample analysed here is drawn from the public
-      <a href="https://github.com/rf-peixoto/Phishing_pot" target="_blank" rel="noopener noreferrer">Phishing Pot</a>
+      <a href="https://github.com/rf-peixoto/phishing_pot" target="_blank" rel="noopener noreferrer">Phishing Pot</a>
       corpus — an open research collection of real phishing emails. In line with responsible handling, the raw message
       is not rehosted here, and the payload URL is defanged throughout; the live link is never reproduced.
     </p>
   </div>
- 
-</div>
-
 
 </div>
