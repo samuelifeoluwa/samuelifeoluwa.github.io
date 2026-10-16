@@ -86,6 +86,13 @@ async function showDetail(pageId) {
         }
     }
     
+    // Update the URL hash so this detail page can be shared / linked directly
+    if (history.replaceState) {
+        history.replaceState(null, '', '#' + pageId);
+    } else {
+        window.location.hash = pageId;
+    }
+
     // Scroll to top
     window.scrollTo(0, 0);
 }
@@ -104,6 +111,11 @@ function hideDetail() {
         el.style.display = 'block';
     });
     
+    // Clear the detail hash from the URL
+    if (history.replaceState) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+
     // Scroll to top
     window.scrollTo(0, 0);
 }
@@ -147,6 +159,15 @@ document.addEventListener('DOMContentLoaded', function() {
             showDetail(detailId);
         });
     });
+
+    // Deep-link support: if the URL already points at a detail page, open it directly
+    const initialHash = window.location.hash.substring(1);
+    if (initialHash) {
+        const target = document.getElementById(initialHash);
+        if (target && target.classList.contains('detail-page')) {
+            showDetail(initialHash);
+        }
+    }
 });
 
 // Certificate Modal setup
