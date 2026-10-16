@@ -18,7 +18,7 @@
     <p>I logged into the LetsDefend.io practice dashboard and filtered for <strong>Critical severity</strong> alerts. I found a critical alert and took ownership of it to begin my investigation.</p>
     
     <div class="lab-image">
-      <img src="assets/images/letsdefend-dashboard-critical.jpg" alt="LetsDefend Dashboard Critical Alert">
+      <img src="assets/images/cve-2024-3400/letsdefend-dashboard-critical.JPG" alt="LetsDefend Dashboard Critical Alert">
       <div class="lab-image-caption">📸 LetsDefend dashboard - Critical severity alerts showing SOC274</div>
     </div>
     
@@ -42,7 +42,7 @@
     <p>I viewed the full alert details and immediately noticed something suspicious in the cookie field.</p>
     
     <div class="lab-image">
-      <img src="assets/images/alert-details-cookie.jpg" alt="Alert Details Showing Malicious Cookie">
+      <img src="assets/images/cve-2024-3400/alert-details-cookie.JPG" alt="Alert Details Showing Malicious Cookie">
       <div class="lab-image-caption">📸 Alert details - SESSID cookie with path traversal and command injection</div>
     </div>
     
@@ -69,7 +69,7 @@
     <p>I took the source IP address (144.172.79.92) and ran it through VirusTotal to check if it had been reported as malicious.</p>
     
     <div class="lab-image">
-      <img src="assets/images/virustotal-ip-144.JPG" alt="VirusTotal IP Results">
+      <img src="assets/images/cve-2024-3400/virustotal-ip-144.JPG" alt="VirusTotal IP Results">
       <div class="lab-image-caption">📸 VirusTotal - 12 vendors flagged 144.172.79.92 as malicious</div>
     </div>
     
@@ -98,7 +98,7 @@
     <p>I checked the mailbox/search to see if there were any emails indicating this was a planned penetration test or attack simulation. This is important to avoid reporting false positives.</p>
     
     <div class="lab-image">
-      <img src="assets/images/no-planned-test-email..JPG" alt="No Email Found for Planned Test">
+      <img src="assets/images/cve-2024-3400/no-planned-test-email..JPG" alt="No Email Found for Planned Test">
       <div class="lab-image-caption">📸 Email search - No results for planned test notifications</div>
     </div>
     
@@ -120,7 +120,7 @@
     <p>I reviewed the raw logs to ensure I didn't miss any additional indicators or context.</p>
     
     <div class="lab-image">
-      <img src="assets/images/raw-logs2.JPG" alt="Raw Log Review">
+      <img src="assets/images/cve-2024-3400/raw-logs2.JPG" alt="Raw Log Review">
       <div class="lab-image-caption">📸 Raw log inspection - Confirmed the malicious POST request</div>
     </div>
     
@@ -144,7 +144,7 @@
     <p>I reviewed the running processes on the affected endpoint and found something suspicious.</p>
     
     <div class="lab-image">
-      <img src="assets/images/raw-logs.jpg" alt="Running Processes Showing Python3">
+      <img src="assets/images/cve-2024-3400/raw-logs.JPG" alt="Running Processes Showing Python3">
       <div class="lab-image-caption">📸 Running processes - Found python3 process with PID 1233</div>
     </div>
     
@@ -177,7 +177,7 @@
     <p>I took the image hash from the python3 process and submitted it to VirusTotal for malware analysis.</p>
     
     <div class="lab-image">
-      <img src="assets/images/hash-virustotal.jpg" alt="Hash VirusTotal Results">
+      <img src="assets/images/cve-2024-3400/hash-virustotal.JPG" alt="Hash VirusTotal Results">
       <div class="lab-image-caption">📸 VirusTotal - 37/63 vendors flagged the hash as malicious</div>
     </div>
     
@@ -205,7 +205,7 @@
     <p>I searched Google for CVE-2024-3400 to understand what this vulnerability is and found the NIST description.</p>
     
     <div class="lab-image">
-      <img src="assets/images/cve-2024-3400-nist.jpg" alt="CVE-2024-3400 NIST Description">
+      <img src="assets/images/cve-2024-3400/cve-2024-3400-nist.JPG" alt="CVE-2024-3400 NIST Description">
       <div class="lab-image-caption">📸 NIST CVE-2024-3400 - Command injection in Palo Alto PAN-OS GlobalProtect</div>
     </div>
     
@@ -228,7 +228,7 @@
     <p>Based on my investigation, I took the following actions:</p>
     
     <div class="lab-image">
-      <img src="assets/images/isolate-endpoint.jpg" alt="Isolate Endpoint">
+      <img src="assets/images/cve-2024-3400/isolate-endpoint.JPG" alt="Isolate Endpoint">
       <div class="lab-image-caption">📸 Isolated PA-Firewall-01 to prevent further compromise</div>
     </div>
     

@@ -72,7 +72,7 @@
     <p>A critical alert was generated with Event ID 316 - SOC338: Lumma Stealer - DLL Side-Loading via Click Fix Phishing.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/eventid-316-alert.JPG" alt="Event ID 316 Alert">
+      <img src="assets/images/lumma-stealer/eventid-316-alert.JPG" alt="Event ID 316 Alert">
       <div class="lab-image-caption">Figure 1: Critical alert as displayed in the LetsDefend dashboard</div>
     </div>
     
@@ -98,7 +98,7 @@
     <p>Examination of the email revealed several indicators consistent with phishing campaigns.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/phishing-email.JPG" alt="Phishing Email">
+      <img src="assets/images/lumma-stealer/phishing-email.JPG" alt="Phishing Email">
       <div class="lab-image-caption">Figure 2: Phishing email - fraudulent Windows 11 Pro upgrade offer</div>
     </div>
     
@@ -119,7 +119,7 @@
     <p>Using browser developer tools, the embedded link was identified as https://windows-update.site. The domain was submitted to VirusTotal and confirmed malicious.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/inspect-website.JPG" alt="Website Inspection">
+      <img src="assets/images/lumma-stealer/inspect-website.JPG" alt="Website Inspection">
       <div class="lab-image-caption">Figure 3: Developer tools inspection revealing malicious domain</div>
     </div>
     
@@ -133,7 +133,7 @@
     </div>
     
     <div class="lab-image">
-      <img src="assets/images/virustotal-website.jpg" alt="VirusTotal Website Results">
+      <img src="assets/images/lumma-stealer/virustotal-website.jpg" alt="VirusTotal Website Results">
       <div class="lab-image-caption">Figure 4: VirusTotal - windows-update.site flagged as malicious</div>
     </div>
   </div>
@@ -144,7 +144,7 @@
     <p>The SMTP IP address 132.232.40.201 was submitted to VirusTotal and IPinfo.io for reputation analysis.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/virustotal-smtp-ip.JPG" alt="VirusTotal SMTP IP Results">
+      <img src="assets/images/lumma-stealer/virustotal-smtp-ip.JPG" alt="VirusTotal SMTP IP Results">
       <div class="lab-image-caption">Figure 5: VirusTotal - SMTP IP flagged as malicious</div>
     </div>
     
@@ -162,7 +162,7 @@
     </div>
     
     <div class="lab-image">
-      <img src="../assets/images/ipinfo-smtp.jpg" alt="IPinfo SMTP IP Lookup">
+      <img src="assets/images/lumma-stealer/ipinfo-smtp.jpg" alt="IPinfo SMTP IP Lookup">
       <div class="lab-image-caption">Figure 6: IPinfo.io - IP geolocated in China</div>
     </div>
   </div>
@@ -174,7 +174,7 @@
     
     <h4>Browser History:</h4>
     <div class="lab-image">
-      <img src="../assets/images/browser-history-dylan.JPG" alt="Victim Browser History">
+      <img src="assets/images/lumma-stealer/browser-history-dylan.JPG" alt="Victim Browser History">
       <div class="lab-image-caption">Figure 7: Browser history confirming navigation to windows-update.site</div>
     </div>
     
@@ -188,7 +188,7 @@
     
     <h4 style="margin-top: 1.5rem;">Terminal History Analysis:</h4>
     <div class="lab-image">
-      <img src="../assets/images/terminal-history.JPG" alt="Terminal History">
+      <img src="assets/images/lumma-stealer/terminal-history.JPG" alt="Terminal History">
       <div class="lab-image-caption">Figure 8: Terminal history - malicious link extracted</div>
     </div>
     
@@ -200,15 +200,14 @@
       ✓ Suspicious commands executed post-visit<br>
       ✓ Evidence of DLL side-loading activity
     </div>
-    assets/images/virustotal-terminal-link.jpg
     <div class="lab-image">
-      <img src=" assets/images/virustotal-terminal-link.jpg" alt="VirusTotal Terminal Link">
+      <img src="assets/images/lumma-stealer/virustotal-terminal-link.jpg" alt="VirusTotal Terminal Link">
       <div class="lab-image-caption">Figure 9: VirusTotal - Extracted terminal link flagged as malicious</div>
     </div>
     
     <h4 style="margin-top: 1.5rem;">Running Processes:</h4>
     <div class="lab-image">
-      <img src="../assets/images/suspicious-processes.jpg" alt="Suspicious Processes">
+      <img src="assets/images/lumma-stealer/suspicious-processes.jpg" alt="Suspicious Processes">
       <div class="lab-image-caption">Figure 10: Running processes - suspicious processes detected</div>
     </div>
     
@@ -228,7 +227,7 @@
     <p>Raw logs were reviewed to confirm email transmission details.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/raw-log-smtp.JPG" alt="Raw Log SMTP">
+      <img src="assets/images/lumma-stealer/raw-log-smtp.JPG" alt="Raw Log SMTP">
       <div class="lab-image-caption">Figure 11: Raw log - SMTP email details confirmed</div>
     </div>
     
@@ -256,7 +255,7 @@
     <p>The following actions were taken following confirmation of compromise.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/contained-system.JPG" alt="System Contained">
+      <img src="assets/images/lumma-stealer/contained-system.JPG" alt="System Contained">
       <div class="lab-image-caption">Figure 12: Endpoint containment executed post-verification</div>
     </div>
     

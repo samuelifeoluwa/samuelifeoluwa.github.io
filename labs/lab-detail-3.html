@@ -82,7 +82,7 @@
     <p>First, I identified the target Windows 10 machine's IP address to ensure proper connectivity for the reverse shell.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/windows10ipconfig.JPG" alt="Windows 10 IP Config">
+      <img src="assets/images/payload-obfuscation/windows10ipconfig.JPG" alt="Windows 10 IP Config">
       <div class="lab-image-caption">📸 windows10ipconfig.JPG - Target machine network configuration</div>
     </div>
     
@@ -100,7 +100,7 @@
     <p>On my Kali Linux machine, I verified network connectivity and prepared the Villain C2 framework.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/kali-linux_ifconfig.JPG" alt="Kali Linux Network Configuration">
+      <img src="assets/images/payload-obfuscation/kali-linux_ifconfig.JPG" alt="Kali Linux Network Configuration">
       <div class="lab-image-caption">📸 kali-linux_ifconfig.JPG - Kali Linux attacker network configuration</div>
     </div>
     
@@ -119,7 +119,7 @@
     <p>I opened the Villain C2 framework to examine the core payload module that generates reverse shells.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/core_villain_payload.JPG" alt="Core Villain Payload">
+      <img src="assets/images/payload-obfuscation/core_villain_payload.JPG" alt="Core Villain Payload">
       <div class="lab-image-caption">📸 core_villain_payload.JPG - Core Villain C2 payload template</div>
     </div>
     
@@ -151,7 +151,7 @@
     <p>I copied the default payload into PowerShell ISE on the Windows 10 VM and attempted to run it. Windows Defender immediately blocked it.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/malicious_payload_flagged.JPG" alt="Malicious Payload Flagged">
+      <img src="assets/images/payload-obfuscation/malicious_payload_flagges.JPG" alt="Malicious Payload Flagged">
       <div class="lab-image-caption">📸 malicious_payload_flagged.JPG - Windows Defender flagged the raw payload</div>
     </div>
     
@@ -170,7 +170,7 @@
     <p>I started by renaming all variables to random, meaningless strings using the find and replace feature in Mousepad.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/variable_renaming.JPG" alt="Variable Renaming in Mousepad">
+      <img src="assets/images/payload-obfuscation/variable_renaming.JPG" alt="Variable Renaming in Mousepad">
       <div class="lab-image-caption">📸 variable_renaming.JPG - Variable renaming in Mousepad</div>
     </div>
     
@@ -184,7 +184,7 @@
     </div>
     
     <div class="lab-image">
-      <img src="../assets/images/payload_still_flagged.JPG" alt="Payload Still Flagged">
+      <img src="assets/images/payload-obfuscation/payload_still_flagged.JPG" alt="Payload Still Flagged">
       <div class="lab-image-caption">📸 payload_still_flagged.JPG - Payload still flagged after variable renaming</div>
     </div>
     <p><span class="fail-badge">STILL DETECTED</span> Variable renaming alone wasn't enough to bypass Defender.</p>
@@ -196,7 +196,7 @@
     <p>Next, I added backticks to break up cmdlet names. This second layer of obfuscation finally bypassed Windows Defender.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/payload_obfuscated_backticks.JPG" alt="Payload Obfuscated with Backticks">
+      <img src="assets/images/payload-obfuscation/payload_obfuscated_backticks.JPG" alt="Payload Obfuscated with Backticks">
       <div class="lab-image-caption">📸 payload_obfuscated_backticks.JPG - Payload with backticks added</div>
     </div>
     
@@ -217,7 +217,7 @@
     <p>I modified the Villain core payload module to include my obfuscated template, ensuring all future generated payloads would use the successful obfuscation pattern.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/save undetected payload.JPG" alt="Save Undetected Payload">
+      <img src="assets/images/payload-obfuscation/save undetected payload.JPG" alt="Save Undetected Payload">
       <div class="lab-image-caption">📸 save undetected payload.JPG - Saving the undetected payload for BAT2EXE</div>
     </div>
   </div>
@@ -228,7 +228,7 @@
     <p>To make the payload more convincing, I downloaded a Spider-Man image and used an online image-to-icon converter to create a custom icon.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/image_payload.JPG" alt="Spider-Man Image">
+      <img src="assets/images/payload-obfuscation/image_payload.JPG" alt="Spider-Man Image">
       <div class="lab-image-caption">📸 image_payload.JPG - Spider-Man image and Villain sessions ready</div>
     </div>
     
@@ -254,7 +254,7 @@
     <p>I used BAT2EXE to convert the obfuscated payload batch file into an executable with the Spider-Man icon.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/bat2execonersion.JPG" alt="BAT2EXE Conversion">
+      <img src="assets/images/payload-obfuscation/bat2execonersion.JPG" alt="BAT2EXE Conversion">
       <div class="lab-image-caption">📸 bat2execonersion.JPG - BAT2EXE conversion with Spider-Man icon</div>
     </div>
     
@@ -286,7 +286,7 @@
     <p>After the victim executed the Spider-Man executable, Villain received three successful reverse shell connections.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/villain_shell_connection.JPG" alt="Villain Shell Connection">
+      <img src="assets/images/payload-obfuscation/villain_shell_connection.JPG" alt="Villain Shell Connection">
       <div class="lab-image-caption">📸 villain_shell_connection.JPG - Villain C2 showing successful shell sessions</div>
     </div>
     

@@ -72,7 +72,7 @@
     <p>First, I performed a full TCP port scan on the Windows 10 target to identify open ports and services, particularly focusing on SMB.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/nmap_port_scan full tcp range.JPG" alt="Nmap Full Port Scan Windows 10">
+      <img src="assets/images/smb-hashcapture/nmap_port_scan full tcp range.JPG" alt="Nmap Full Port Scan Windows 10">
       <div class="lab-image-caption">📸 nmap_port_scan full tcp range.JPG - Full TCP port scan on Windows 10 target</div>
     </div>
     
@@ -108,7 +108,7 @@
     
     <h4>SMB Protocols Supported:</h4>
     <div class="lab-image">
-      <img src="../assets/images/smb_protocols.JPG" alt="SMB Protocols">
+      <img src="assets/images/smb-hashcapture/smb_protocols.JPG" alt="SMB Protocols">
       <div class="lab-image-caption">📸 smb_protocols.JPG - SMB dialects supported on Windows 10</div>
     </div>
     
@@ -130,7 +130,7 @@
     
     <h4 style="margin-top: 1.5rem;">SMB Security Mode:</h4>
     <div class="lab-image">
-      <img src="../assets/images/smb_securtiy_mode.JPG" alt="SMB Security Mode">
+      <img src="assets/images/smb-hashcapture/smb_securtiy_mode.JPG" alt="SMB Security Mode">
       <div class="lab-image-caption">📸 smb_security_mode.JPG - SMB signing enabled but not enforced</div>
     </div>
     
@@ -157,7 +157,7 @@
     <p>I launched Responder on my Kali machine to listen for SMB authentication attempts and capture NTLMv2 hashes.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/ntlmv2 hash.JPG" alt="NTLMv2 Hash Capture">
+      <img src="assets/images/smb-hashcapture/ntlmv2 hash.JPG" alt="NTLMv2 Hash Capture">
       <div class="lab-image-caption">📸 ntlmv2hash.JPG - Responder capturing NTLMv2 hash from Windows 10</div>
     </div>
     
@@ -189,7 +189,7 @@
     <p>I saved the captured NTLMv2 hash to a file for cracking with Hashcat.</p>
     
     <div class="lab-image">
-      <img src="../assets/images/saving ntlm hash to a file.JPG" alt="Saving NTLM Hash">
+      <img src="assets/images/smb-hashcapture/saving ntlm hash to a file.JPG" alt="Saving NTLM Hash">
       <div class="lab-image-caption">📸 saving ntlm hash to a file.JPG - Saving captured hash to file for cracking</div>
     </div>
     
@@ -205,7 +205,7 @@
     <p>I used Hashcat with the rockyou.txt wordlist to crack the captured NTLMv2 hash (mode 5600).</p>
     
     <div class="lab-image">
-      <img src="../assets/images/hashcat1.JPG" alt="Hashcat Setup">
+      <img src="assets/images/smb-hashcapture/hashcat1.JPG" alt="Hashcat Setup">
       <div class="lab-image-caption">📸 hashcat1.JPG - Hashcat starting with NTLMv2 hash mode 5600</div>
     </div>
     
@@ -235,7 +235,7 @@
     <h4 style="margin-top: 2rem;">Hashcat - Successful Crack:</h4>
     
     <div class="lab-image">
-      <img src="../assets/images/hashcat2.JPG" alt="Hashcat Successful Crack">
+      <img src="assets/images/smb-hashcapture/hashcat2.JPG" alt="Hashcat Successful Crack">
       <div class="lab-image-caption">📸 hashcat2.JPG - Hashcat successfully cracked the NTLMv2 hash</div>
     </div>
     
@@ -258,7 +258,7 @@
     <h4 style="margin-top: 2rem;">Recovered Password:</h4>
     
     <div class="lab-image">
-      <img src="../assets/images/hashcat3.JPG" alt="Hashcat Password Recovered">
+      <img src="assets/images/smb-hashcapture/hashcat3.JPG" alt="Hashcat Password Recovered">
       <div class="lab-image-caption">📸 hashcat3.JPG - Plaintext password recovered from NTLMv2 hash</div>
     </div>
     

@@ -1,8 +1,6 @@
 <!-- Anatomy of a Banco do Brasil Tax-Refund Phishing Email -->
 <style>
-  /* Scoped to this write-up only — keeps screenshots compact and centred */
-  #writeup-detail-2 .lab-image img { max-width: 460px; max-height: 340px; height: auto; }
-  #writeup-detail-2 .lab-image { padding: 0.6rem; }
+  /* Page-specific: the translated-notice quote box (layout/mobile handled globally in style.css) */
   #writeup-detail-2 .lure-quote {
     border-left: 3px solid #60a5fa; margin: 1rem 0; padding: 0.7rem 1rem;
     color: #cbd5e1; background: #0a0e15; border-radius: 4px; line-height: 1.6;
@@ -193,6 +191,7 @@ Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
   <!-- ============ 6. INDICATORS OF COMPROMISE ============ -->
   <div class="step">
     <h3>6. Indicators of Compromise (IOCs)</h3>
+    <div style="overflow-x:auto;">
     <table style="width:100%;border-collapse:collapse;font-size:0.95rem;">
       <tbody>
         <tr>
@@ -225,6 +224,7 @@ Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <!-- ============ 7. CONCLUSION & RECOMMENDATIONS ============ -->
@@ -249,7 +249,7 @@ Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
     </p>
   </div>
 
-    <!-- ============ SOURCE & RESPONSIBLE HANDLING ============ -->
+  <!-- ============ SOURCE & RESPONSIBLE HANDLING ============ -->
   <div class="step">
     <h3>Source &amp; Responsible Handling</h3>
     <p>
@@ -259,8 +259,5 @@ Decoded Subject: Liberação de IRPF - 6NwlyfzWcsNerv0</div>
       is not rehosted here, and the payload URL is defanged throughout; the live link is never reproduced.
     </p>
   </div>
- 
-</div>
-
 
 </div>

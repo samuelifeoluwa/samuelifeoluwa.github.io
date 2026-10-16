@@ -467,3 +467,47 @@ footer a {
 }
 .lab-category.red  { color: #f87171; }
 .lab-category.blue { color: #60a5fa; }
+
+/* ============================================================
+   RESPONSIVE / MOBILE-SAFE LAYER
+   Added once, globally. Caps detail-page screenshots, keeps
+   tables and long URLs inside the screen, and tightens spacing
+   on phones — so detail pages no longer need their own <style>.
+   ============================================================ */
+
+/* Detail-page screenshots: capped on desktop, shrink to fit on mobile */
+.detail-content .lab-image img {
+  max-width: min(520px, 100%);
+  max-height: 400px;
+  height: auto;
+}
+
+/* Long words / URLs in body text can't push the layout wide */
+.detail-content p,
+.detail-content li {
+  overflow-wrap: break-word;
+}
+
+/* Tables (e.g. IOC tables) stay within the screen */
+.detail-content table { width: 100%; max-width: 100%; }
+.detail-content td,
+.detail-content th {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Comfortable spacing + smaller headings on small screens */
+@media (max-width: 600px) {
+  header { padding: 2.5rem 1rem; }
+  header h1 { font-size: 2rem; }
+  header h2 { font-size: 1.2rem; }
+  section { padding: 2.5rem 1rem; }
+  h2 { font-size: 1.5rem; }
+  .detail-page { padding: 0 1rem; }
+  .detail-content { padding: 1.25rem; }
+}
+
+/* Catch-all: ANY image or code block on ANY detail page stays within the screen,
+   even if it doesn't use the usual .lab-image / .command-box classes. */
+.detail-page img  { max-width: 100%; height: auto; }
+.detail-page pre  { max-width: 100%; overflow-x: auto; }
